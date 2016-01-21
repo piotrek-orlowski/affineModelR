@@ -20,5 +20,5 @@ vignettes/*.pdf
 
 # Rcpp automatically generated files
 R/RcppExports.R
-src/RcppExports.src
+src/RcppExports.cpp
 src/*.o
