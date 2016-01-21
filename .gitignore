@@ -10,6 +10,10 @@
 
 # RStudio files
 .Rproj.user/
+*.Rproj
+
+# Build config files
+.Rbuildignore
 
 # produced vignettes
 vignettes/*.html
@@ -30,3 +34,4 @@ src/*.o
 # ROXYGEN automatically generated files
 man/*.Rd
 NAMESPACE
+.Rproj.user
