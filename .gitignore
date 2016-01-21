@@ -22,3 +22,11 @@ vignettes/*.pdf
 R/RcppExports.R
 src/RcppExports.cpp
 src/*.o
+
+# Compiled library files
+*.dll
+*.so
+
+# ROXYGEN automatically generated files
+man/*.Rd
+NAMESPACE
