@@ -1,0 +1,1 @@
+extern "C" arma::colvec jumpTransformTaylor(const arma::colvec& z, const arma::mat& A, const arma::mat& Ainv, const arma::vec& muY, const arma::vec& sigmaY);

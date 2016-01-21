@@ -1,0 +1,16 @@
+Package: affineModelR
+Type: Package
+Title: What the package does (short line)
+Version: 0.5
+Date: 2016-01-21
+Author: Piotr Or{\l}owski, Andr{\'a}s Sali
+Maintainer: Piotr Or{\l}owski <piotrek.orlowski@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: GPL (>= 2)
+Imports:
+	deSolve,
+	Rcpp (>= 0.12.1), 
+	RcppArmadillo
+LinkingTo: 
+	Rcpp, 
+	RcppArmadillo
