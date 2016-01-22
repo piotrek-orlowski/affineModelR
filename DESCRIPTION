@@ -8,7 +8,7 @@ Maintainer: Piotrek Or{\l}owski <first.last@gmail.com>
 Description: Implementation of Duffie, Pan and Singleton's (2000) affine jump-diffusion framework for arbitrary number of factors and with elastic model specifications, with focus on equity applications. Evaluation of characteristic (moment generating) function and its derivatives by numerical solution of Riccati ODE system.
 License: GPL (>= 2)
 URL: https://github.com/piotrek-orlowski/affineModelR
-Imports:
+Depends:
 	deSolve,
 	Rcpp (>= 0.12.1), 
 	RcppArmadillo
