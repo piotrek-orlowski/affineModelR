@@ -1,12 +1,13 @@
 Package: affineModelR
 Type: Package
 Title: Affine Jump Diffusion Models for R
-Version: 0.5
+Version: 0.1
 Date: 2016-01-21
-Author: Piotr Or{\l}owski, Andr{\'a}s Sali
-Maintainer: Piotr Or{\l}owski <piotrek.orlowski@gmail.com>
+Author: Piotrek Or{\l}owski, Andr{\'a}s Sali
+Maintainer: Piotrek Or{\l}owski <first.last@gmail.com>
 Description: Implementation of Duffie, Pan and Singleton's (2000) affine jump-diffusion framework for arbitrary number of factors and with elastic model specifications, with focus on equity applications. Evaluation of characteristic (moment generating) function and its derivatives by numerical solution of Riccati ODE system.
 License: GPL (>= 2)
+URL: https://github.com/piotrek-orlowski/affineModelR
 Imports:
 	deSolve,
 	Rcpp (>= 0.12.1), 
