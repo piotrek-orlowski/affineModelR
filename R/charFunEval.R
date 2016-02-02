@@ -14,7 +14,7 @@
 #' @return \code{affineCF} evaluates the CF/CGF of an affine model under P or Q measures, at matrix \code{u} of size  \code{U x (N.factors+1)}, maturity vector \code{t.vec} of length \code{T}, and variance factor matrix of size \code{S x N.factors}. The result is a \code{U x T x S} matrix. \cr 
 #' \code{affineCFderivs} evaluates derivatives of the characteristic function with respect to its first argument via ODE solutions of an extended system. A list of length 4 is returned, each holding an \code{U x T x S} matrix. This is useful for calculating moments of log-returns.
 
-affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = 'expNormJumpTransform', N.factors = 3, CGF= FALSE, mod.type = "standard"){
+affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mod.type = "standard"){
   
   # define mkt
   mkt <- data.frame(p=1,q=0,r=0,t=t.vec)
@@ -49,7 +49,7 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = '
 #' @export affineCFderivs
 #' @describeIn affineCFandDerivs
 
-affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = 'expNormJumpTransform', N.factors = 3, mod.type = 'standard', ...){
+affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 3, mod.type = 'standard', ...){
   
   # define mkt
   mkt <- data.frame(p=1,q=0,r=0,t=t.vec)
@@ -121,7 +121,7 @@ affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransfo
 #' @export affineCFderivsNumerical
 #' @describeIn affineCFandDerivs
 
-affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform, mod.type, ...){
+affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type, ...){
   
   uu <- seq(-5*hh,5*hh,by=hh)
   u <- apply(u,1,function(u.row){

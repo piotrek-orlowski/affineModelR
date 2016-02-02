@@ -4,17 +4,21 @@
 
 using namespace std;
 // [[Rcpp::export]]
-std::complex<double> jumpTransform(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+std::complex<double> jumpTransform(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
-  // assumption is that only the underlying and the first volatility factor can jumps
-  complex<double> c = muSc * beta(1) + rhoc * muSc * beta(0);
-  
-  complex<double> cf = expm1c(muYc * beta(0) + 0.5 * pow(sigmaYc * beta(0),2));
-  cf += c;
-  cf = cf / (complex<double>(1,0) - c);
-  
-  return(cf);
-  
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
+    // assumption is that only the underlying and the first volatility factor can jumps
+    complex<double> c = muSc * beta(1) + rhoc * muSc * beta(0);
+    
+    complex<double> cf = expm1c(muYc * beta(0) + 0.5 * pow(sigmaYc * beta(0),2));
+    cf += c;
+    cf = cf / (complex<double>(1,0) - c);
+    
+    return(cf);
+    
   } catch( std::exception& __ex__) {
     forward_exception_to_r(__ex__);
   } catch(...) {
@@ -25,8 +29,13 @@ std::complex<double> jumpTransform(const arma::cx_colvec& beta, const double& mu
 
 // This returns the gradient of the jumpTransform
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD1(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat jumpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
+    
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar;
     int mDim = beta.size();
@@ -61,8 +70,12 @@ arma::cx_mat jumpTransformD1(const arma::cx_colvec& beta, const double& muYc, co
 
 // This returns the Hessian of the jumpTransform
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD2(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat jumpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar;
     int mDim = beta.size();
@@ -107,8 +120,12 @@ arma::cx_mat jumpTransformD2(const arma::cx_colvec& beta, const double& muYc, co
 
 // This returns the derivative of the vectorized Hessian of the jumpTransform, i.e. the third deriv
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD3(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat jumpTransformD3(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar;
     int mDim = beta.size();
@@ -169,8 +186,12 @@ arma::cx_mat jumpTransformD3(const arma::cx_colvec& beta, const double& muYc, co
 
 // Kou-Exponential jump transform
 // [[Rcpp::export]]
-std::complex<double> kouExpTransform(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc){
+std::complex<double> kouExpTransform(const arma::cx_colvec& beta, const Rcpp::List& jmpPar){
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> c = (pow(sigmaYc * beta(0),2.0) - complex<double>(1,0)) * (beta(1) - muSc + rhoc*beta(0));
     
@@ -189,8 +210,12 @@ std::complex<double> kouExpTransform(const arma::cx_colvec& beta, const double& 
 
 // This returns the gradient of kouExpTransform
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD1(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat kouExpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar1, tmpVar2, tmpVar3;
     int mDim = beta.size();
@@ -229,8 +254,12 @@ arma::cx_mat kouExpTransformD1(const arma::cx_colvec& beta, const double& muYc, 
 
 // This returns the Hessian of kouExpTransform
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD2(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat kouExpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar1, tmpVar2, tmpVar3;
     int mDim = beta.size();
@@ -280,8 +309,12 @@ arma::cx_mat kouExpTransformD2(const arma::cx_colvec& beta, const double& muYc, 
 
 // This returns the derivative of the vectorized Hessian of the kouExpTransform, i.e. the third deriv
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD3(const arma::cx_colvec& beta, const double& muYc, const double& sigmaYc, const double& muSc, const double& rhoc) {
+arma::cx_mat kouExpTransformD3(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
   try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
+    double muSc = Rcpp::as<double>(jmpPar["muSc"]);
     // assumption is that only the underlying and the first volatility factor can jump
     complex<double> tmpVar1, tmpVar2, tmpVar3;
     int mDim = beta.size();

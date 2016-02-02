@@ -4,13 +4,13 @@
 #' @param mkt data.frame describing the market structure (times to maturity, interest rate, dividend yield, current stock price). See Details in \code{\link{jumpDiffusionODEs}}.
 #' @param K0,K1,l0,l1,H1 output from \code{\link{ODEstructs}}, for details see DPS (2000).
 #' @param jmp jump parameters, element of \code{params} list from \code{\link{jumpDiffusionODEs}}.
-#' @param jumpTransform string, name of jump transform type.
+#' @param jumpTransform pointer to jump transform function.
 #' @param N.factors number of stochastic volatility factors.
 #' @param mf,rtol,atol ODE solution precision parameters, see \code{\link{jumpDiffusionODEs}}.
 #' @details This is an internal function not intended for the user.
 #' 
 
-solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = 'expNormJumpTransform', mf = 22, rtol=1e-14, atol=1e-30, N.factors = 3) {  
+solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, mf = 22, rtol=1e-14, atol=1e-30, N.factors = 3) {  
   # prepare structures where we save
   N <- nrow(u)
   TT <- dim(mkt$t)[1]
@@ -31,11 +31,12 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = 'expNormJu
   odeList$K0 <- K0
   odeList$l0 <- l0
   odeList$l1 <- l1
-  odeList$muYc <- jmp$muYc
-  odeList$sigmaYc <- jmp$sigmaYc
-  odeList$muSc <- jmp$muSc
-  odeList$rhoc <- jmp$rhoc
-  odeList$transformName <- jumpTransform
+  odeList$jmpPar <- jmp
+#   odeList$muYc <- jmp$muYc
+#   odeList$sigmaYc <- jmp$sigmaYc
+#   odeList$muSc <- jmp$muSc
+#   odeList$rhoc <- jmp$rhoc
+  odeList$jumpTransformPtr <- jumpTransform
 
   # now solve for all frequencies
   for (uu in 1:nrow(u)) {

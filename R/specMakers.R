@@ -1,13 +1,13 @@
 #' Calculate vectors and matrices for propagation equations in a N-factor model with co-jumps in the underlying and the first volatility factor
 #' @param params.P A structure containing the volatility factor + jump descriptions under measure P
 #' @param params.Q A structure containing the volatility factor + jump descriptions under measure Q
-#' @param jumpTransform The function that calculates the jumpTransform
+#' @param jumpTransform Pointer to the basic jumpTransform c++ function. Via this mechanism it is easy for the user to provide their external jump transform functions for both simulation and ODE calculations.
 #' @param N.factors The number of stochastic volatility factors (stock is not a factor)
 #' @param rf.rate risk-free rate
 #' @export
 #' @return Return a list with elements \code{terms.dt}, \code{terms.vdt}, \code{terms.vdW}, \code{terms.vdWort}, \code{vterms.dt}, \code{vterms.vdt}, \code{vterms.vdW}, \code{jmpPar}, \code{intensity.terms}. These are all elements for simulating the N-factor model.
 
-ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransform, N.factors, rf.rate = 0.0,mod.type = "standard") {
+ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = getPointerToJumpTransform(fstr = 'expNormJumpTransform'), N.factors, rf.rate = 0.0,mod.type = "standard") {
   
   ### if no params.P structure is given, the simulation is done under Q!
   doP <- !is.null(params.P)
@@ -18,13 +18,7 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransform, N.factors
   stopifnot(length(params.Q$jmp$lvec) == 1)
   stopifnot(length(params.Q$jmp$lprop) == N.factors)
   
-  if(jumpTransform == "expNormJumpTransform"){
-    jumpTransform <- expNormJumpTransform
-  } else if(jumpTransform == "kouExpJumpTransform"){
-    jumpTransform <- kouExpJumpTransform
-  }
-  
-  qJmpCompensator <- jumpTransform(c(1,0,0), params.Q$jmp)
+  qJmpCompensator <- Re(evaluateTransform(genPtr_ = jumpTransformPointer, beta = c(1,rep(0,N.factors)), jmpPar = params.Q$jmp))
   
   ### Prepare the Q terms.dt
   

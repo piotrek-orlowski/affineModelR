@@ -44,10 +44,20 @@ SEXP getPointerToJumpTransform(std::string fstr) {
 
 //'@export
 //[[Rcpp::export]]
-arma::vec testPointerToGenerator(SEXP genPtr_, arma::vec jmpPar){
+arma::vec evaluateGenerator(SEXP genPtr_, arma::vec jmpPar){
   // Get the jump generator pointer
   Rcpp::XPtr<funcPtr> genPtr(genPtr_);
   funcPtr genFoo = *genPtr;
   arma::vec rndVec = genFoo(jmpPar);
   return(rndVec);
+}
+
+//'@export
+//[[Rcpp::export]]
+std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec& beta, const Rcpp::List& jmpPar){
+  // Get the jump generator pointer
+  Rcpp::XPtr<cmpFuncPtr> genPtr(genPtr_);
+  cmpFuncPtr genFoo = *genPtr;
+  std::complex<double> tfVal = genFoo(beta,jmpPar);
+  return(tfVal);
 }

@@ -20,17 +20,17 @@ ODEstructs <- function(params,jumpTransform,mkt,N.factors,mod.type = "standard")
     stop("The first factor rho is not 0")
   }
   
-  if(jumpTransform == "expNormJumpTransform"){
-    jumpTransform <- expNormJumpTransform
-  } else if(jumpTransform == "kouExpJumpTransform"){
-    jumpTransform <- kouExpJumpTransform
+  if(inherits(jumpTransform,'list')){
+    jumpTrPtr <- jumpTransform$TF
+  } else if(inherits(jumpTransform,'externalptr')){
+    jumpTrPtr <- jumpTransform
   }
   
   #drift that depends on state variables
   K1 <- matrix(0,N.factors+1,N.factors+1)
   
   for (nn in 1:N.factors) {
-    K1[1,1+nn] = -0.5 * params[[as.character(nn)]]$phi^2 - params$jmp$lprop[nn]*(jumpTransform(c(1,0,0),params$jmp))
+    K1[1,1+nn] = -0.5 * params[[as.character(nn)]]$phi^2 - params$jmp$lprop[nn]*Re(evaluateTransform(genPtr_ = jumpTrPtr, beta = c(1,rep(0,N.factors)),jmpPar = params$jmp))
     K1[1+nn,1+nn] = -params[[as.character(nn)]]$kpp
   }
   
@@ -38,7 +38,7 @@ ODEstructs <- function(params,jumpTransform,mkt,N.factors,mod.type = "standard")
   
   K0 <- rep(0, N.factors + 1)
   # Here we explicitly IGNORE mkt$r and mkt$q in the construction of the drift matrix for the ODE solver. The adjustments for r and q are made inside solvODE, after the solution has been obtained.
-  K0[1] <- -l0 * (jumpTransform(c(1,rep(0,N.factors)),params$jmp))
+  K0[1] <- -l0 * Re(evaluateTransform(genPtr_ = jumpTrPtr, beta = c(1,rep(0,N.factors)),jmpPar = params$jmp))
   
   for (nn in 1:N.factors) {
     K0[1+nn] <- params[[as.character(nn)]]$eta*params[[as.character(nn)]]$kpp

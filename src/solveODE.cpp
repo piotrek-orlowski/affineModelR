@@ -2,6 +2,7 @@
 #include <RcppArmadillo.h>
 #include <cmath>
 #include <complex>
+#include "../inst/include/affineModelR.h"
 #include "expm1c.h"
 #include "jumpTransform.h"
 
@@ -51,26 +52,17 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   colvec l0(L0.begin(),1,false);
   
   // now get jump parameters
-  double muYc = Rcpp::as<double>(D["muYc"]);
-  double sigmaYc = Rcpp::as<double>(D["sigmaYc"]);
-  double muSc = Rcpp::as<double>(D["muSc"]);
-  double rhoc = Rcpp::as<double>(D["rhoc"]);
+  Rcpp::List jmpPar = D["jmpPar"];
 
   // pick jump transform
-  std::string transformName = Rcpp::as<std::string>(D["transformName"]);
-  std::complex<double> (*jumpTrFoo)(const arma::cx_colvec&, const double&, const double&, const double&, const double&);
-  if(transformName == "expNormJumpTransform"){
-    jumpTrFoo = &jumpTransform;
-  } else if(transformName == "kouExpJumpTransform"){
-    jumpTrFoo = &kouExpTransform;
-  } else {
-    throw std::range_error("Wrong transform name, check value!");
-  }
+  SEXP tmpPtr = D["jumpTransformPtr"];
+  Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
+  cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
   
   cx_colvec beta(y,Nfactors+1,false);
 
   // calculate jump transform
-  complex<double> jmpTr = jumpTrFoo(beta,muYc,sigmaYc,muSc,rhoc);
+  complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
   // complex<double> jmpTr = jumpTransform(beta,muYc,sigmaYc,muSc,rhoc);
   
   cx_colvec yRes = trans(K1) * beta;
@@ -119,30 +111,29 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   colvec l0(L0.begin(),1,false);
   
   // now get jump parameters
-  double muYc = Rcpp::as<double>(D["muYc"]);
-  double sigmaYc = Rcpp::as<double>(D["sigmaYc"]);
-  double muSc = Rcpp::as<double>(D["muSc"]);
-  double rhoc = Rcpp::as<double>(D["rhoc"]);
+  Rcpp::List jmpPar = D["jmpPar"];
   
   // pick jump transform
-  std::string transformName = Rcpp::as<std::string>(D["transformName"]);
-  std::complex<double> (*jumpTrFoo)(const arma::cx_colvec&, const double&, const double&, const double&, const double&);
-  arma::cx_mat (*jumpTrD1Foo)(const arma::cx_colvec&, const double&, const double&, const double&, const double&);
-  arma::cx_mat (*jumpTrD2Foo)(const arma::cx_colvec&, const double&, const double&, const double&, const double&);
-  arma::cx_mat (*jumpTrD3Foo)(const arma::cx_colvec&, const double&, const double&, const double&, const double&);
-  jumpTrFoo = &jumpTransform;
-  jumpTrD1Foo = &jumpTransformD1;
-  jumpTrD2Foo = &jumpTransformD2;
-  jumpTrD3Foo = &jumpTransformD3;
-  if(transformName == "expNormJumpTransform"){
-  } else if(transformName == "kouExpJumpTransform"){
-    jumpTrFoo = &kouExpTransform;
-    jumpTrD1Foo = &kouExpTransformD1;
-    jumpTrD2Foo = &kouExpTransformD2;
-    jumpTrD3Foo = &kouExpTransformD3;
-  }
+  Rcpp::List tmpPointers = D["jumpTransformPtr"];
+  SEXP tmpPtr = tmpPointers["TF"];
+  Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
+  cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
   
+  // pick jump transform derivative
+  tmpPtr = tmpPointers["D1"];
+  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD1Foo_(tmpPtr);
+  cmpFuncPtrMat jumpTrD1Foo = *jumpTrD1Foo_;
   
+  // pick jump transform second derivative
+  tmpPtr = tmpPointers["D2"];
+  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD2Foo_(tmpPtr);
+  cmpFuncPtrMat jumpTrD2Foo = *jumpTrD2Foo_;
+  
+  // pick jump transform third derivative
+  tmpPtr = tmpPointers["D3"];
+  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD3Foo_(tmpPtr);
+  cmpFuncPtrMat jumpTrD3Foo = *jumpTrD3Foo_;
+
   // layout of y vector: 5 entries per derivative, total (2+N.factors)*4
   // let kk denote the derivative order
   // stock coeff indexing : kk*(2+Nfactors)
@@ -164,16 +155,16 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   
   // calculate jump transform
   complex<double> jmpTr;
-  jmpTr = jumpTrFoo(beta,muYc,sigmaYc,muSc,rhoc);
+  jmpTr = jumpTrFoo(beta,jmpPar);
   
   // three jump transform derivatives
-  cx_mat jmpTrD1 = jumpTrD1Foo(beta,muYc,sigmaYc,muSc,rhoc);
+  cx_mat jmpTrD1 = jumpTrD1Foo(beta,jmpPar);
   cx_mat jmpTrD1Tot = jmpTrD1 * betaPrime;
   
-  cx_mat jmpTrD2 = jumpTrD2Foo(beta,muYc,sigmaYc,muSc,rhoc);
+  cx_mat jmpTrD2 = jumpTrD2Foo(beta,jmpPar);
   cx_mat jmpTrD2Tot = jmpTrD1 * betaDblPrime + betaPrime.st() * jmpTrD2 * betaPrime;
   
-  cx_mat jmpTrD3 = jumpTrD3Foo(beta,muYc,sigmaYc,muSc,rhoc);
+  cx_mat jmpTrD3 = jumpTrD3Foo(beta,jmpPar);
   
   cx_mat unvecH = jmpTrD3 * betaPrime;
   unvecH.reshape((1+Nfactors),(1+Nfactors));
