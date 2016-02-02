@@ -1,6 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 #include "jumpGenerator.h"
+#include "jumpTransform.h"
 #include "../inst/include/affineModelR.h"
 
 //'@export
@@ -13,6 +14,33 @@ SEXP getPointerToGenerator(std::string fstr) {
   else
     return Rcpp::wrap(Rcpp::XPtr<funcPtr>(R_NilValue)); // runtime error as NULL no XPtr
 }
+
+//'@export
+//[[Rcpp::export]]
+SEXP getPointerToJumpTransform(std::string fstr) {
+  Rcpp::List pointers;
+  if (fstr == "expNormJumpTransform"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform)), 
+      Rcpp::Named("D1") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&jumpTransformD1)),
+      Rcpp::Named("D2") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&jumpTransformD2)),
+      Rcpp::Named("D3") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&jumpTransformD3))
+    );
+    return(pointers);
+  }
+  else if (fstr == "kouExpJumpTransform"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&kouExpTransform)), 
+      Rcpp::Named("D1") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD1)),
+      Rcpp::Named("D2") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD2)),
+      Rcpp::Named("D3") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD3))
+    );
+    return(pointers);
+  }
+  else
+    return Rcpp::wrap(Rcpp::XPtr<cmpFuncPtr>(R_NilValue)); // runtime error as NULL no XPtr
+}
+
 
 //'@export
 //[[Rcpp::export]]
