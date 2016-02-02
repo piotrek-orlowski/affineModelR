@@ -23,7 +23,7 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = g
   if(is.null(params.P)){
     ode.sol <- jumpDiffusionODEs(u = u, params = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type)  
   } else {
-    ode.sol <- twoFactorJumpODEsSolveP(u = u, params.P = params.P, params.Q = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type)
+    ode.sol <- jumpDiffusionODEsP(u = u, params.P = params.P, params.Q = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type)
   }
   
   

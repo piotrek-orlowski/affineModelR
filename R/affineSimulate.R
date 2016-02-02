@@ -14,7 +14,7 @@
 #' @return A list containing the simulated stock & volatility paths + stock price jump times
 #' 
 
-affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78, freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0, jumpTransform = 'expNormJumpTransform', mod.type = "standard", specMaker = ODEstructsForSim, nrepl = 1,...){
+affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78, freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0, jumpGeneratorPtr = getPointerToGenerator(fstr = 'expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, mod.type = "standard", specMaker = ODEstructsForSim, nrepl = 1,...){
   
   # Set random seed
   set.seed(rng.seed)
@@ -25,10 +25,10 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   }
   
   # Make parameter structures which are to be passed to the C propagation code.
-  paramsListCpp <- specMaker(paramsList$P, paramsList$Q, jumpTransform, N.factors, rf.rate, mod.type = mod.type,...)
+  paramsListCpp <- specMaker(paramsList$P, paramsList$Q, jumpTransformPtr, N.factors, rf.rate, mod.type = mod.type,...)
   
   # Obtain pointer to jump generator: you can provide your own c++ jump generating function
-  jmpPtr = getPointerToGenerator(fstr = jumpTransform)
+  jmpPtr = jumpGeneratorPtr
   
   # Set up time grid & random numbers for the BMs
   #   time.grid <- simulator2fMakeTimeGrid(t.days,t.freq,freq.subdiv,N.factors)
@@ -54,7 +54,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
-        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = paramsList$P, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransform, N.factors = N.factors, CGF = F, mod.type = mod.type)
+        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = paramsList$P, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, mod.type = mod.type)
         cf <- drop(cf)
         cf.mom <- 1e4*diff(cf)
         init.vals.cpp$V.array[nn] <- cf.mom
@@ -63,7 +63,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
-        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = NULL, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransform, N.factors = N.factors, CGF = F, mod.type = mod.type)
+        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = NULL, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, mod.type = mod.type)
         cf <- drop(cf)
         cf.mom <- 1e4*diff(cf)
         init.vals.cpp$V.array[nn] <- cf.mom
