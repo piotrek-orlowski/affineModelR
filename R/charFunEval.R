@@ -14,16 +14,16 @@
 #' @return \code{affineCF} evaluates the CF/CGF of an affine model under P or Q measures, at matrix \code{u} of size  \code{U x (N.factors+1)}, maturity vector \code{t.vec} of length \code{T}, and variance factor matrix of size \code{S x N.factors}. The result is a \code{U x T x S} matrix. \cr 
 #' \code{affineCFderivs} evaluates derivatives of the characteristic function with respect to its first argument via ODE solutions of an extended system. A list of length 4 is returned, each holding an \code{U x T x S} matrix. This is useful for calculating moments of log-returns.
 
-affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mod.type = "standard"){
+affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mod.type = "standard", ...){
   
   # define mkt
   mkt <- data.frame(p=1,q=0,r=0,t=t.vec)
   
   # solve ODEs
   if(is.null(params.P)){
-    ode.sol <- jumpDiffusionODEs(u = u, params = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type)  
+    ode.sol <- jumpDiffusionODEs(u = u, params = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type, ...)  
   } else {
-    ode.sol <- jumpDiffusionODEsP(u = u, params.P = params.P, params.Q = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type)
+    ode.sol <- jumpDiffusionODEsP(u = u, params.P = params.P, params.Q = params.Q, mkt = mkt, jumpTransform = jumpTransform, N.factors = N.factors, mod.type = mod.type, ...)
   }
   
   
@@ -36,7 +36,7 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = g
     res <- apply(res,c(1,2),sum)
   })
   
-  log.cf.val <- array(as.numeric(log.cf.val), dim = c(nrow(u),length(t.vec),nrow(v.0)))
+  log.cf.val <- array(as.complex(log.cf.val), dim = c(nrow(u),length(t.vec),nrow(v.0)))
   
   # return
   if(CGF){
