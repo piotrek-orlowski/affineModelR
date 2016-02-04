@@ -45,6 +45,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       
       // square-root dt for Euler-scheme purposes
       double dtSqrt = pow(dt,0.5);
+      
       //    Rcout << "dt, dtsqrt" << dt << " " << dtSqrt << "\n";
       // scale Normal increments by sqrt(dt)
       bmGrid *= dtSqrt;
@@ -88,8 +89,13 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       
       // Count jumps
       int numJumps = 0;
+      double cumdt = 0;
+      arma::mat jumpSizes(jmpLength,simLength+1,arma::fill::zeros);
       
       for(int ii=1; ii < (TT+1); ii++){
+        // count where you are in sample
+        cumdt += dt;
+        
         // set previous values
         sPrev = sArray.row(ii-1).t();
         vPrev = vArray.row(ii-1).t();
@@ -118,8 +124,9 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         jmpProb = 1.0 - exp(-instIntensity(0) * dt);
         if(jumpCheck(ii-1) < jmpProb){
           numJumps++;
-          jumpMarks(ii) = 1.0;
+          jumpMarks(ii) = cumdt;
           jump = genFoo(jmpPar);
+          jumpSizes.col(ii) = jump;
           //        Rcout << "at ii " << ii << " jmp prob is " << jmpProb << ", stock jump is " << stockJump << ", vol jump is " << volJump <<"\n";
           dLogS += jump(0);
           // Rcout << "jmpLength: \n" << jmpLength << "\n";
@@ -147,7 +154,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       //    Rcout << "sArray \n" << sArray << "\n vArray \n" << vArray << "\n"; 
       // exponentiate sArray
       sArray = exp(sArray);
-      List returnList = List::create(Named("S.array") = sArray, Named("V.array") = vArray, Named("num.jumps") = numJumps, Named("dt") = dt, Named("jump.times") = jumpMarks);
+      List returnList = List::create(Named("S.array") = sArray, Named("V.array") = vArray, Named("num.jumps") = numJumps, Named("dt") = dt, Named("jump.times") = jumpMarks, Named("jump.sizes") = jumpSizes);
       
       return wrap(returnList);
       //    return wrap(1);

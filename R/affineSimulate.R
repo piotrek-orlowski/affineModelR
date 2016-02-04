@@ -80,6 +80,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   V.array.list <- vector(length = nrepl, mode = "list")
   S.array.list <- vector(length = nrepl, mode = "list")
   numJumpsList <- numeric(nrepl)
+  jumpTimesList <- vector(length = nrepl, mode = "list")
   for(kk in 1:nrepl){
     simArraysList[[kk]] <- affineSimulateCpp(TT, 2*N.factors, paramsListCpp, dt, init.vals.cpp, jmpPtr)
     
@@ -93,6 +94,12 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
     
     numJumpsList[kk] <- simArraysList[[kk]]$num.jumps
     
+    loc.jumpTimes <- simArraysList[[kk]]$jump.times[which(simArraysList[[kk]]$jump.times!=0)]*252 # given in DAYS
+    loc.jumpSizes <- simArraysList[[kk]]$jump.sizes[,which(simArraysList[[kk]]$jump.times!=0),drop=FALSE]
+    loc.jumpDF <- as.data.frame(cbind(loc.jumpTimes, t(loc.jumpSizes)))
+    colnames(loc.jumpDF) <- c("day","J_logS",sapply(1:(nrow(loc.jumpSizes)-1), function(ss) paste0("J_v",ss)))
+    jumpTimesList[[kk]] <- as.matrix(loc.jumpDF)
+    
     colnames(V.array.list[[kk]]) <- c("day",paste0("v",1:N.factors))
     colnames(S.array.list[[kk]]) <- c("day","F")
   }
@@ -101,5 +108,5 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   S.array <- do.call(what = abind, args = S.array.list)
   numJumps <- do.call(what = c, args = as.list(numJumpsList))
   
-  return(list(S.array = S.array, V.array = V.array, dt=dt/252, numJumps = numJumps))
+  return(list(S.array = S.array, V.array = V.array, dt=dt/252, numJumps = numJumps, jumpSizes = jumpTimesList))
 }
