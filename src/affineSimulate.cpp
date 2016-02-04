@@ -122,9 +122,11 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
           jump = genFoo(jmpPar);
           //        Rcout << "at ii " << ii << " jmp prob is " << jmpProb << ", stock jump is " << stockJump << ", vol jump is " << volJump <<"\n";
           dLogS += jump(0);
-          //        Rcout << "dv before a jump: \n" << dv << "\n";
-          dv.subvec(0,jmpLength-1) += jump.subvec(1,jmpLength);
-          //        Rcout << "dv with a jump: \n" << dv << "\n";
+          // Rcout << "jmpLength: \n" << jmpLength << "\n";
+          // jump.print("jump itself");
+          // Rcout << "dv before a jump: \n" << dv << "\n";
+          dv.subvec(0,jmpLength-2) += jump.subvec(1,jmpLength-1);
+          // Rcout << "dv with a jump: \n" << dv << "\n";
         }
         // add increment to previous value, store
         sArray.row(ii) = sPrev + dLogS;
