@@ -92,8 +92,8 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
     pick.day.freq <- seq(from = 1, to = t.days/t.freq*freq.subdiv, by = freq.subdiv)
     
     if(burn.in > 0){
-      simArraysList[[kk]]$V.array <- simArraysList[[kk]]$V.array[-(1:burn.in),]
-      simArraysList[[kk]]$S.array <- simArraysList[[kk]]$S.array[-(1:burn.in),]
+      simArraysList[[kk]]$V.array <- simArraysList[[kk]]$V.array[-(1:burn.in),,drop=FALSE]
+      simArraysList[[kk]]$S.array <- simArraysList[[kk]]$S.array[-(1:burn.in),,drop=FALSE]
     }
     
     V.array.list[[kk]] <- cbind((seq(0+day.offset,t.days+day.offset-dt.loc,by = dt.loc)),simArraysList[[kk]]$V.array[pick.day.freq,])
