@@ -1,5 +1,5 @@
 #include "RcppArmadillo.h"
-#include "expm1c.h"
+#include "../inst/include/expm1c.h"
 
 using namespace std;
 using namespace Rcpp;

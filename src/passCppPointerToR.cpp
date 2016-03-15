@@ -1,7 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#include "jumpGenerator.h"
-#include "jumpTransform.h"
+#include "../inst/include/jumpGenerator.h"
+#include "../inst/include/jumpTransform.h"
 #include "../inst/include/affineModelR.h"
 
 //'@export
@@ -61,3 +61,14 @@ std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec& beta
   std::complex<double> tfVal = genFoo(beta,jmpPar);
   return(tfVal);
 }
+
+
+// //'@export
+// //[[Rcpp::export]]
+// arma::cx_mat evaluateTransformDerivative(SEXP genPtr_, const arma::cx_colvec& beta, const Rcpp::List& jmpPar){
+//   // Get the jump generator pointer
+//   Rcpp::XPtr<cmpFuncPtrMat> genPtr(genPtr_);
+//   cmpFuncPtr genFoo = *genPtr;
+//   arma::cx_mat tfVal = genFoo(beta,jmpPar);
+//   return(tfVal);
+// }

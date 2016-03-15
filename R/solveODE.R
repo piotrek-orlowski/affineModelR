@@ -45,7 +45,7 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointer
     betaalpha0 <- c(u.vec,0)
     names(betaalpha0) <- c("c1",c(paste("b",1:N.factors,sep=""),"a"))
     
-    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivs2", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=50000)
+    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivs2", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=150000)
     solMat[uu,,] <- sol[-1,c(paste("b",1:N.factors,sep=""),"a")]
   }
   

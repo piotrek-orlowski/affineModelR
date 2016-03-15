@@ -1,6 +1,6 @@
 // Taylor expansion of the jump transform
 #include "RcppArmadillo.h"
-#include "expm1c.h"
+#include "../inst/include/expm1c.h"
 
 using namespace std;
 // [[Rcpp::export]]
