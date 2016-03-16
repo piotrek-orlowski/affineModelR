@@ -7,13 +7,13 @@ using namespace Rcpp;
 arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, const bool retLog){
   
   // Pull out coeffs dimensions for convenience
-  int Np1, T, U;
+  unsigned int Np1, T, U;
   U = coeffs.n_rows;
   T = coeffs.n_cols;
   Np1 = coeffs.n_slices;
   
   // S states
-  int S = stateMat.n_rows;
+  unsigned int S = stateMat.n_rows;
   
   // extend stateMat
   arma::mat stateMatExtended(S,Np1,arma::fill::ones);
@@ -29,7 +29,7 @@ arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, co
   // Initialise local coefficient more container
   arma::mat locCoeffs(U,T,arma::fill::zeros);
   // Loop over states and fill cfVals;
-  for(int tind = 0; tind < T; tind++){
+  for(unsigned int tind = 0; tind < T; tind++){
     locCoeffs = coeffs.subcube(0,tind,0,U-1,tind,Np1-1);
     cfVals.subcube(0,tind,0,U-1,tind,S-1) =  locCoeffs * stateMatExtended.t();
   }

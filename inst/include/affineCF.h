@@ -5,7 +5,7 @@
 using namespace std;
 using namespace Rcpp;
 
-arma::cube affineCFevalCpp(const NumericVector coeffs, const arma::mat stateMat);
+arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, const bool retLog);
 
 arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateMat);
   
