@@ -1,7 +1,7 @@
 #ifndef AFFINE_MODELR_H
 #define AFFINE_MODELR_H
 #include<RcppArmadillo.h>
-#include "affineModelR_RcppExports.h"
+// #include "affineModelR_RcppExports.h"
 
 typedef arma::vec (*funcPtr)(const arma::vec x);
 

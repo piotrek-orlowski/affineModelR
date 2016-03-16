@@ -3,7 +3,6 @@
 using namespace std;
 using namespace Rcpp;
 
-// [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::export]]
 arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateMat){
   
