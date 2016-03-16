@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 // [[Rcpp::interfaces(r,cpp)]]
 // [[Rcpp::export]]
-arma::cube affineCFderivsEvalCpp(const arma::cube& coeffs, const arma::mat& stateMat){
+arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateMat){
   
   // The coeffs cube is of size U x T x 4*(N+1)
   int U = coeffs.n_rows;

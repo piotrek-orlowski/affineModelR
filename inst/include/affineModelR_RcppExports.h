@@ -25,11 +25,11 @@ namespace affineModelR {
         }
     }
 
-    inline arma::cube affineCFevalCpp(const arma::cube& coeffs, const arma::mat& stateMat, const bool retLog) {
+    inline arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, const bool retLog) {
         typedef SEXP(*Ptr_affineCFevalCpp)(SEXP,SEXP,SEXP);
         static Ptr_affineCFevalCpp p_affineCFevalCpp = NULL;
         if (p_affineCFevalCpp == NULL) {
-            validateSignature("arma::cube(*affineCFevalCpp)(const arma::cube&,const arma::mat&,const bool)");
+            validateSignature("arma::cube(*affineCFevalCpp)(const arma::cube,const arma::mat,const bool)");
             p_affineCFevalCpp = (Ptr_affineCFevalCpp)R_GetCCallable("affineModelR", "affineModelR_affineCFevalCpp");
         }
         RObject __result;
@@ -44,11 +44,11 @@ namespace affineModelR {
         return Rcpp::as<arma::cube >(__result);
     }
 
-    inline arma::cube affineCFderivsEvalCpp(const arma::cube& coeffs, const arma::mat& stateMat) {
+    inline arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateMat) {
         typedef SEXP(*Ptr_affineCFderivsEvalCpp)(SEXP,SEXP);
         static Ptr_affineCFderivsEvalCpp p_affineCFderivsEvalCpp = NULL;
         if (p_affineCFderivsEvalCpp == NULL) {
-            validateSignature("arma::cube(*affineCFderivsEvalCpp)(const arma::cube&,const arma::mat&)");
+            validateSignature("arma::cube(*affineCFderivsEvalCpp)(const arma::cube,const arma::mat)");
             p_affineCFderivsEvalCpp = (Ptr_affineCFderivsEvalCpp)R_GetCCallable("affineModelR", "affineModelR_affineCFderivsEvalCpp");
         }
         RObject __result;

@@ -4,7 +4,7 @@
 
 using namespace std;
 // [[Rcpp::export]]
-std::complex<double> jumpTransform(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -29,7 +29,7 @@ std::complex<double> jumpTransform(const arma::cx_colvec& beta, const Rcpp::List
 
 // This returns the gradient of the jumpTransform
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat jumpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -70,7 +70,7 @@ arma::cx_mat jumpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jmpP
 
 // This returns the Hessian of the jumpTransform
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat jumpTransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -120,7 +120,7 @@ arma::cx_mat jumpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jmpP
 
 // This returns the derivative of the vectorized Hessian of the jumpTransform, i.e. the third deriv
 // [[Rcpp::export]]
-arma::cx_mat jumpTransformD3(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat jumpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -186,7 +186,7 @@ arma::cx_mat jumpTransformD3(const arma::cx_colvec& beta, const Rcpp::List& jmpP
 
 // Kou-Exponential jump transform
 // [[Rcpp::export]]
-std::complex<double> kouExpTransform(const arma::cx_colvec& beta, const Rcpp::List& jmpPar){
+std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -210,7 +210,7 @@ std::complex<double> kouExpTransform(const arma::cx_colvec& beta, const Rcpp::Li
 
 // This returns the gradient of kouExpTransform
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat kouExpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -254,7 +254,7 @@ arma::cx_mat kouExpTransformD1(const arma::cx_colvec& beta, const Rcpp::List& jm
 
 // This returns the Hessian of kouExpTransform
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat kouExpTransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -309,7 +309,7 @@ arma::cx_mat kouExpTransformD2(const arma::cx_colvec& beta, const Rcpp::List& jm
 
 // This returns the derivative of the vectorized Hessian of the kouExpTransform, i.e. the third deriv
 // [[Rcpp::export]]
-arma::cx_mat kouExpTransformD3(const arma::cx_colvec& beta, const Rcpp::List& jmpPar) {
+arma::cx_mat kouExpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
