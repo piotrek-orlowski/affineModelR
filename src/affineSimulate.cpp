@@ -143,7 +143,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
           vArray.row(ii) = vNew.t();
         }
         else{
-          for(int kk = 0; kk < vArray.row(ii).n_cols; kk++){
+          for(unsigned int kk = 0; kk < vArray.row(ii).n_cols; kk++){
             //          vArray(ii,kk) = max(1e-9,vArray(ii,kk));
             vArray(ii,kk) = max(1e-9,vNew(kk));
           }

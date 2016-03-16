@@ -12,7 +12,6 @@ arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateM
   int T = coeffs.n_cols;
   int N = stateMat.n_cols;
   int Np1 = N+1;
-  int Nbig = coeffs.n_slices;
   int S = stateMat.n_rows;
   
   // Extract CF coeffs
@@ -43,7 +42,7 @@ arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateM
   arma::cube cfD3Vals = cfVals % (cfD3Vals_log + 3*cfD1Vals_log % cfD2Vals_log + arma::pow(cfD1Vals_log,3.0));
   
   // splice the arrays together
-  arma::cube cfRet(U,T,4*S);
+  arma::cube cfRet(U,T,4*S,arma::fill::zeros);
   cfRet.slices(0,S-1) = cfVals;
   
   cfRet.slices(S,2*S-1) = cfD1Vals;
