@@ -10,7 +10,7 @@
 #' @details This is an internal function not intended for the user.
 #' @return 3-dim array of ODE solutions. Size: \code{N x T x 4*(N.factors+1)}
 
-solveExtendedODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, mf = 22, rtol=1e-14, atol=1e-30, N.factors = 3, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform'),...) {  
+solveExtendedODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, mf = 22, rtol=1e-12, atol=1e-30, N.factors = 3, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform'),...) {  
   
   # prepare structures where we save
   N <- nrow(u)
@@ -51,7 +51,7 @@ solveExtendedODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, mf = 22, rtol=1e-1
     names(betaalpha0) <- c("c1",c(paste("b",1:N.factors,sep=""),"a"))
     names(betaalpha0) <- c("c1",paste("b",1:N.factors,sep=""),"a","c1p1",paste("bp1",1:N.factors,sep=""),"ap1","c1p2",paste("bp2",1:N.factors,sep=""),"ap2","c1p3",paste("bp3",1:N.factors,sep=""),"ap3")
     
-    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivsExt", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=50000,...)
+    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivsExt", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=150000,...)
     solMat[uu,,] <- sol[-1,c(paste("b",1:N.factors,sep=""),"a",paste("bp1",1:N.factors,sep=""),"ap1",paste("bp2",1:N.factors,sep=""),"ap2",paste("bp3",1:N.factors,sep=""),"ap3")]
   }
   

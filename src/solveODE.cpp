@@ -3,8 +3,8 @@
 #include <cmath>
 #include <complex>
 #include "../inst/include/affineModelR.h"
-#include "expm1c.h"
-#include "jumpTransform.h"
+#include "../inst/include/expm1c.h"
+#include "../inst/include/jumpTransform.h"
 
 using namespace Rcpp;
 using namespace arma;

@@ -25,7 +25,7 @@
 #' @return From \code{jumpDiffusionODEs} and \code{jumpDiffusionODEsP}: An array of size \code{UxTx(N.factors + 1)} where \code{U = nrow(u)}, \code{T = length(mkt$t)} (number of maturities), code{N.factors+1} is the number of coefficients in the exponentially affine characteristic function. \cr 
 #' From \code{odeEstSolveWrap}: an array of UxTx(4x(N.factors+1)): affine coefficients and their derivatives with respect to \code{u[,1]}. This allows to for highly accurate evaluation of the derivatives of the characteristic function of the log-asset price.
 
-jumpDiffusionODEs <- function(u,params,mkt,jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, rtol=1e-13, atol=1e-30, mf = 22, N.factors = 3, mod.type = "standard") {
+jumpDiffusionODEs <- function(u,params,mkt,jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, rtol=1e-12, atol=1e-30, mf = 22, N.factors = 3, mod.type = "standard") {
   
   # sanity checks. Make sure we conform with "new" setup
   stopifnot(ncol(u)== (N.factors+1))

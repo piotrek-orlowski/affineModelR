@@ -9,12 +9,13 @@
 #' @param rf.rate Assumed constant risk-free rate (annualized, continuously compounded)
 #' @param jumpTransform The function that calculates the jump Laplace transform
 #' @param specMaker function that takes arguments \code{params.P}, \code{params.Q}, \code{jumpTransform}, \code{N.factors}, \code{rf.rate}, \code{mod.type} and potentially more via the ellipsis operator (\code{...}) and returns the DPS matrices. See documentation of \link{ODEstructs}.
+#' @param burn.in numeric, how many observations should be simulated before we take the sample -- to depart from the initial conditions.
 #' @export
 #' @useDynLib affineModelR
 #' @return A list containing the simulated stock & volatility paths + stock price jump times
 #' 
 
-affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78, freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0, jumpGeneratorPtr = getPointerToGenerator(fstr = 'expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, mod.type = "standard", specMaker = ODEstructsForSim, nrepl = 1,...){
+affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78, freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0, jumpGeneratorPtr = getPointerToGenerator(fstr = 'expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, mod.type = "standard", specMaker = ODEstructsForSim, nrepl = 1, burn.in = 0,...){
   
   # Set random seed
   set.seed(rng.seed)
@@ -36,6 +37,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   time.grid.length <- floor(t.days/h)
   dt <- h/252
   TT <- time.grid.length
+  burn.in <- min(0.2 * TT, burn.in)
   
   #   random.number.grids <- simulator2fGenerateRandomDraws(rng.seed,time.grid,N.factors)
   
@@ -80,18 +82,45 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   V.array.list <- vector(length = nrepl, mode = "list")
   S.array.list <- vector(length = nrepl, mode = "list")
   numJumpsList <- numeric(nrepl)
+  jumpTimesList <- vector(length = nrepl, mode = "list")
   for(kk in 1:nrepl){
-    simArraysList[[kk]] <- affineSimulateCpp(TT, 2*N.factors, paramsListCpp, dt, init.vals.cpp, jmpPtr)
+    simArraysList[[kk]] <- affineSimulateCpp(TT + burn.in, 2*N.factors, paramsListCpp, dt, init.vals.cpp, jmpPtr)
     
     # Thin the results to the desired frequency, add timestamps
     dt.loc <- simArraysList[[kk]]$dt*252*freq.subdiv
     
     pick.day.freq <- seq(from = 1, to = t.days/t.freq*freq.subdiv, by = freq.subdiv)
     
+    if(burn.in > 0){
+      simArraysList[[kk]]$V.array <- simArraysList[[kk]]$V.array[-(1:burn.in),,drop=FALSE]
+      simArraysList[[kk]]$S.array <- simArraysList[[kk]]$S.array[-(1:burn.in),,drop=FALSE]
+    }
+    
     V.array.list[[kk]] <- cbind((seq(0+day.offset,t.days+day.offset-dt.loc,by = dt.loc)),simArraysList[[kk]]$V.array[pick.day.freq,])
     S.array.list[[kk]] <- cbind((seq(0+day.offset,t.days+day.offset-dt.loc,by = dt.loc)),simArraysList[[kk]]$S.array[pick.day.freq])
     
-    numJumpsList[kk] <- simArraysList[[kk]]$num.jumps
+    if(burn.in > 0){
+      loc.jumpTimes <- simArraysList[[kk]]$jump.times[-(1:burn.in)]*252 # given in DAYS
+      loc.jumpSizes <- simArraysList[[kk]]$jump.sizes[,-(1:burn.in),drop=FALSE]
+      
+      loc.jumpSizes <- loc.jumpSizes[,which(loc.jumpTimes!=0), drop=FALSE]
+      loc.jumpTimes <- loc.jumpTimes[which(loc.jumpTimes!=0)]
+      
+      loc.jumpTimes <- loc.jumpTimes - burn.in * simArraysList[[kk]]$dt * 252
+    } else {
+      loc.jumpTimes <- simArraysList[[kk]]$jump.times*252 # given in DAYS
+      loc.jumpTimes <- loc.jumpTimes[which(loc.jumpTimes!=0)]
+      loc.jumpTimes <- loc.jumpTimes - burn.in * simArraysList[[kk]]$dt
+      
+      loc.jumpSizes <- simArraysList[[kk]]$jump.sizes
+      loc.jumpSizes <- loc.jumpSizes[,which(simArraysList[[kk]]$jump.times!=0), drop=FALSE]
+    }
+    
+    loc.jumpDF <- as.data.frame(cbind(loc.jumpTimes, t(loc.jumpSizes)))
+    colnames(loc.jumpDF) <- c("day","J_logS",sapply(1:(nrow(loc.jumpSizes)-1), function(ss) paste0("J_v",ss)))
+    jumpTimesList[[kk]] <- as.matrix(loc.jumpDF)
+    
+    numJumpsList[kk] <- nrow(loc.jumpDF)
     
     colnames(V.array.list[[kk]]) <- c("day",paste0("v",1:N.factors))
     colnames(S.array.list[[kk]]) <- c("day","F")
@@ -101,5 +130,5 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   S.array <- do.call(what = abind, args = S.array.list)
   numJumps <- do.call(what = c, args = as.list(numJumpsList))
   
-  return(list(S.array = S.array, V.array = V.array, dt=dt/252, numJumps = numJumps))
+  return(list(S.array = S.array, V.array = V.array, dt=dt/252, numJumps = numJumps, jumpSizes = jumpTimesList))
 }
