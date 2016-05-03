@@ -53,8 +53,8 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
   if (is.null(params.P[[as.character(1)]]$erp)) {
     params.P[[as.character(1)]]$erp <- 0
   }
-  if (is.null(params.P[[as.character(1)]]$erp.0)) {
-    params.P[[as.character(1)]]$erp.0 <- 0
+  if (is.null(params.P[[as.character(1)]]$erp0)) {
+    params.P[[as.character(1)]]$erp0 <- 0
   }
   
   ode.structs.P <- ODEstructs(params.P,jumpTransform,mkt,N.factors,mod.type)
@@ -81,7 +81,7 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
     ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
   }
   # add identically constant part of the erp
-  ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp.0
+  ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp0
   
   # correct coefficients in K1 for drift from other factors in the cascade model
   if(mod.type == "cascade.vol"){
@@ -111,8 +111,8 @@ odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, ato
     if (is.null(params.P[[as.character(1)]]$erp)) {
       params.P[[as.character(1)]]$erp <- 0
     }
-    if (is.null(params.P[[as.character(1)]]$erp.0)) {
-      params.P[[as.character(1)]]$erp.0 <- 0
+    if (is.null(params.P[[as.character(1)]]$erp0)) {
+      params.P[[as.character(1)]]$erp0 <- 0
     }
     
     ode.structs.P <- ODEstructs(params.P,jumpTransform,mkt,N.factors,mod.type)
@@ -139,7 +139,7 @@ odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, ato
       ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
     }
     # add identically constant part of the erp
-    ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp.0
+    ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp0
     
     # correct coefficients in K1 for drift from other factors in the cascade model
     if(mod.type == "cascade.vol"){
