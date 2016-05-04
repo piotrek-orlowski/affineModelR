@@ -58,7 +58,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
         der.mat[2,nn+1] <- 1e-4
         cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = paramsList$P, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, mod.type = mod.type, rtol = 1e-6, atol = 1e-12)
         cf <- drop(cf)
-        cf.mom <- 1e4*diff(cf)
+        cf.mom <- Re(1e4*diff(cf))
         init.vals.cpp$V.array[nn] <- cf.mom
       }
     } else {
@@ -67,7 +67,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
         der.mat[2,nn+1] <- 1e-4
         cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = NULL, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, mod.type = mod.type, rtol = 1e-6, atol = 1e-12)
         cf <- drop(cf)
-        cf.mom <- 1e4*diff(cf)
+        cf.mom <- Re(1e4*diff(cf))
         init.vals.cpp$V.array[nn] <- cf.mom
       }
     }
