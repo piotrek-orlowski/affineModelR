@@ -10,7 +10,7 @@ The package has been checked to compile from source on Linux and Windows. The `-
 
 This package allows for calculating the values of the characteristic function in Affine Jump Diffusion models with an arbitrary number of factors and flexible jump specifications. The CF can be evaluated both under the statistical probability measure *P*, and the risk-neutral (pricing) measure *Q*. Knowledge of the characteristic function is equivalent to the knowledge of the distribution of a random variable.
 
-The *P* CF can be used for calculating moments of stock prices and volatility factors, for example for purposes of parameter estimation. The *Q* CF can be used for calculating prices of derivatives with various transform methods (the package https://github.com/piotrek-orlowski/transformOptionPricer includes a basic functionality for vanilla options).
+The *P* CF can be used for calculating conditional moments of stock returns and volatility factors, for example for purposes of parameter estimation, filtering. The *Q* CF can be used for calculating prices of derivatives with various transform methods (the package https://github.com/piotrek-orlowski/transformOptionPricer includes a basic functionality for vanilla options).
 
 The package also contains a fast simulating engine: it is easy to draw large samples from AJDMs at arbitrary frequencies. This feature can be useful in advanced courses in Derivatives, or for developing tools in High-Frequency Econometrics.
 
