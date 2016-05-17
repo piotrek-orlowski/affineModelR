@@ -17,3 +17,7 @@ The package also contains a fast simulating engine: it is easy to draw large sam
 # External headers
 
 The package makes some of its functions available via headers in `inst/include`. The end user has to indicate to the compiler how to link against the package.
+
+# Authors
+
+The package has been developed by Andras Sali (https://github.com/andrewsali) and Piotr Or{\l}owski.
