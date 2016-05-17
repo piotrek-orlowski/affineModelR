@@ -20,4 +20,4 @@ The package makes some of its functions available via headers in `inst/include`.
 
 # Authors
 
-The package has been developed by Andras Sali (https://github.com/andrewsali) and Piotr Or{\l}owski.
+The package has been developed by Andras Sali (https://github.com/andrewsali) and Piotr Orłowski.
