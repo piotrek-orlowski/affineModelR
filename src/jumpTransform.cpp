@@ -374,3 +374,112 @@ arma::cx_mat kouExpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpP
   }
   return 0;
 }
+
+// Jacod and Todorov (2010): doubly uniform jumps, co-jump only
+// [[Rcpp::export]]
+std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  
+  double l,h,d,u;
+  l = Rcpp::as<double>(jmpPar["muYc"]);
+  h = Rcpp::as<double>(jmpPar["sigmaYc"]);
+  d = Rcpp::as<double>(jmpPar["muSc"]);
+  u = Rcpp::as<double>(jmpPar["rhoc"]);
+  
+  complex<double> c1, c2;
+  c1 = beta(0);
+  c2 = beta(1);
+  
+  
+  complex<double> cf;
+  if(h > 0 & u > 0){
+    cf = 1.0/(2.0*(h-l)*(u-d)); 
+  } else if(h > 0 & u == 0){
+    cf = 1.0/(2.0*(h-l)); 
+  } else if(h == 0 & u > 0){
+    cf = 1.0/(u-d); 
+  } else {
+    cf = 1.0;
+  }
+  
+  if(u > 0){
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cf *= (u-d);
+    }  
+  }
+  
+  if(h > 0){
+    if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
+    } else {
+      cf *= 2*(h-l);
+    }  
+  }
+  
+  cf -= 1.0;
+  
+  return cf;
+}
+
+// Jacod and Todorov (2010): doubly uniform jumps, co-jump and vol jump
+// [[Rcpp::export]]
+std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  
+  double l,h,d,u;
+  l = Rcpp::as<double>(jmpPar["muYc"]);
+  h = Rcpp::as<double>(jmpPar["sigmaYc"]);
+  d = Rcpp::as<double>(jmpPar["muSc"]);
+  u = Rcpp::as<double>(jmpPar["rhoc"]);
+  
+  // First do the co-jump CF
+  complex<double> c1, c2;
+  c1 = beta(0);
+  c2 = beta(1);
+  
+  complex<double> cf;
+  if(h > 0 & u > 0){
+    cf = 1.0/(2.0*(h-l)*(u-d)); 
+  } else if(h > 0 & u == 0){
+    cf = 1.0/(2.0*(h-l)); 
+  } else if(h == 0 & u > 0){
+    cf = 1.0/(u-d); 
+  } else {
+    cf = 1.0;
+  }
+  
+  if(u > 0){
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cf *= (u-d);
+    }  
+  }
+  
+  if(h > 0){
+    if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
+    } else {
+      cf *= 2*(h-l);
+    }  
+  }
+  
+  cf -= 1.0;
+  
+  // Now do the pure vol jump CF
+  complex<double> cfvol;
+  if(u > 0){
+    cfvol = 1.0/(u-d);
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cfvol *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cfvol *= (u-d);
+    }  
+  } else {
+    cfvol = 1.0;
+  }
+  
+  cfvol -= 1.0;
+  cf = 0.5 * cf + 0.5 * cfvol;
+  return cf;
+}
