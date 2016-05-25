@@ -70,3 +70,48 @@ arma::vec generate_kouExpJump(arma::vec jmpPar){
   
   return(res);
 }
+
+//' @export
+// [[Rcpp::export]]
+arma::vec generate_JT2010_cojump(arma::vec jmpPar){
+  // This is Jacod and Todorov 2010, Do Price and Volatility Jump Together -- co-jumps only
+  arma::vec res(2,arma::fill::zeros);
+  
+  // in jmpPar the first two are l and h, the last two are d and u
+  res(0) = jmpPar(0) + jmpPar(1) * arma::randu();
+  arma::vec svec(1);
+  svec(0) = arma::randu() - 0.5;
+  svec = arma::sign(svec);
+  res(0) *= svec(0);
+  
+  res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+  
+  return(res);
+}
+
+//' @export
+// [[Rcpp::export]]
+arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar){
+  
+  // This is Jacod and Todorov 2010, Do Price and Volatility Jump Together -- co-jumps and pure vol jumps
+  arma::vec res(2,arma::fill::zeros);
+  
+  // check if co-jump or vol jumps
+  arma::vec covec(1);
+  covec(0) = arma::randu() - 0.5;
+  
+  // in jmpPar the first two are l and h, the last two are d and u
+  if(covec(0) <= 0){
+    res(0) = jmpPar(0) + jmpPar(1) * arma::randu();
+    arma::vec svec(1);
+    svec(0) = arma::randu() - 0.5;
+    svec = arma::sign(svec);
+    res(0) *= svec(0);
+    
+    res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+  } else {
+    res(0) = 0.0;
+    res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+  }
+  return(res);
+}

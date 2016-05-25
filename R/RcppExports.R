@@ -23,6 +23,16 @@ generate_kouExpJump <- function(jmpPar) {
     .Call('affineModelR_generate_kouExpJump', PACKAGE = 'affineModelR', jmpPar)
 }
 
+#' @export
+generate_JT2010_cojump <- function(jmpPar) {
+    .Call('affineModelR_generate_JT2010_cojump', PACKAGE = 'affineModelR', jmpPar)
+}
+
+#' @export
+generate_JT2010_cojump_voljump <- function(jmpPar) {
+    .Call('affineModelR_generate_JT2010_cojump_voljump', PACKAGE = 'affineModelR', jmpPar)
+}
+
 jumpTransform <- function(beta, jmpPar) {
     .Call('affineModelR_jumpTransform', PACKAGE = 'affineModelR', beta, jmpPar)
 }
@@ -53,6 +63,14 @@ kouExpTransformD2 <- function(beta, jmpPar) {
 
 kouExpTransformD3 <- function(beta, jmpPar) {
     .Call('affineModelR_kouExpTransformD3', PACKAGE = 'affineModelR', beta, jmpPar)
+}
+
+jt2010_transform_CJ <- function(beta, jmpPar) {
+    .Call('affineModelR_jt2010_transform_CJ', PACKAGE = 'affineModelR', beta, jmpPar)
+}
+
+jt2010_transform_CJ_VJ <- function(beta, jmpPar) {
+    .Call('affineModelR_jt2010_transform_CJ_VJ', PACKAGE = 'affineModelR', beta, jmpPar)
 }
 
 #' @title Make Positive Definite

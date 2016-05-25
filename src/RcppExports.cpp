@@ -70,6 +70,28 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// generate_JT2010_cojump
+arma::vec generate_JT2010_cojump(arma::vec jmpPar);
+RcppExport SEXP affineModelR_generate_JT2010_cojump(SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(generate_JT2010_cojump(jmpPar));
+    return __result;
+END_RCPP
+}
+// generate_JT2010_cojump_voljump
+arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar);
+RcppExport SEXP affineModelR_generate_JT2010_cojump_voljump(SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(generate_JT2010_cojump_voljump(jmpPar));
+    return __result;
+END_RCPP
+}
 // jumpTransform
 std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_jumpTransform(SEXP betaSEXP, SEXP jmpParSEXP) {
@@ -163,6 +185,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(kouExpTransformD3(beta, jmpPar));
+    return __result;
+END_RCPP
+}
+// jt2010_transform_CJ
+std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP affineModelR_jt2010_transform_CJ(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(jt2010_transform_CJ(beta, jmpPar));
+    return __result;
+END_RCPP
+}
+// jt2010_transform_CJ_VJ
+std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP affineModelR_jt2010_transform_CJ_VJ(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(jt2010_transform_CJ_VJ(beta, jmpPar));
     return __result;
 END_RCPP
 }

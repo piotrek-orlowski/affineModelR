@@ -11,6 +11,10 @@ SEXP getPointerToGenerator(std::string fstr) {
     return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_expNormJump))));
   else if (fstr == "kouExpJumpTransform")
     return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_kouExpJump))));
+  else if (fstr == "jacodTodorovCoJumps")
+    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_JT2010_cojump))));
+  else if (fstr == "jacodTodorovCoJumpsVolJumps")
+    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_JT2010_cojump_voljump))));
   else
     return Rcpp::wrap(Rcpp::XPtr<funcPtr>(R_NilValue)); // runtime error as NULL no XPtr
 }
@@ -34,6 +38,18 @@ SEXP getPointerToJumpTransform(std::string fstr) {
       Rcpp::Named("D1") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD1)),
       Rcpp::Named("D2") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD2)),
       Rcpp::Named("D3") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&kouExpTransformD3))
+    );
+    return(pointers);
+  }
+  else if (fstr == "jacodTodorovCoJumps"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jt2010_transform_CJ))
+    );
+    return(pointers);
+  }
+  else if (fstr == "jacodTodorovCoJumpsVolJumps"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jt2010_transform_CJ_VJ))
     );
     return(pointers);
   }
