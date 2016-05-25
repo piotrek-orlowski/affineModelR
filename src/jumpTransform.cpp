@@ -389,18 +389,34 @@ std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp:
   c1 = beta(0);
   c2 = beta(1);
   
-  complex<double> cf = 1.0/(2.0*(h-l)*(u-d));
   
-  if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
-    cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+  complex<double> cf;
+  if(h > 0 & u > 0){
+    cf = 1.0/(2.0*(h-l)*(u-d)); 
+  } else if(h > 0 & u == 0){
+    cf = 1.0/(2.0*(h-l)); 
+  } else if(h == 0 & u > 0){
+    cf = 1.0/(u-d); 
   } else {
-    cf *= (u-d);
+    cf = 1.0;
   }
-  if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
-    cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
-  } else {
-    cf *= 2*(h-l);
+  
+  if(u > 0){
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cf *= (u-d);
+    }  
   }
+  
+  if(h > 0){
+    if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
+    } else {
+      cf *= 2*(h-l);
+    }  
+  }
+  
   cf -= 1.0;
   
   return cf;
@@ -421,26 +437,46 @@ std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rc
   c1 = beta(0);
   c2 = beta(1);
   
-  complex<double> cf = 1.0/(2.0*(h-l)*(u-d));
+  complex<double> cf;
+  if(h > 0 & u > 0){
+    cf = 1.0/(2.0*(h-l)*(u-d)); 
+  } else if(h > 0 & u == 0){
+    cf = 1.0/(2.0*(h-l)); 
+  } else if(h == 0 & u > 0){
+    cf = 1.0/(u-d); 
+  } else {
+    cf = 1.0;
+  }
   
-  if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
-    cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
-  } else {
-    cf *= (u-d);
+  if(u > 0){
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cf *= (u-d);
+    }  
   }
-  if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
-    cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
-  } else {
-    cf *= 2*(h-l);
+  
+  if(h > 0){
+    if(abs(c1) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cf *= 1.0/c1*(exp(c1 * h) - exp(c1 * l) + exp(-c1*l) - exp(-c1*h));
+    } else {
+      cf *= 2*(h-l);
+    }  
   }
+  
   cf -= 1.0;
   
   // Now do the pure vol jump CF
-  complex<double> cfvol = 1.0/(u-d);
-  if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
-    cfvol *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+  complex<double> cfvol;
+  if(u > 0){
+    cfvol = 1.0/(u-d);
+    if(abs(c2) > pow(std::numeric_limits<double>::epsilon(), 0.5)){
+      cfvol *= 1.0/c2*(exp(c2 * u) - exp(c2 * d)); 
+    } else {
+      cfvol *= (u-d);
+    }  
   } else {
-    cfvol *= (u-d);
+    cfvol = 1.0;
   }
   
   cfvol -= 1.0;
