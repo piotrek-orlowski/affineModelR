@@ -98,6 +98,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         
         // generate random normals
         mat bmGrid = mat(1,BB,fill::randn);
+        bmGrid *= dtSqrt;
         
         // set previous values
         sPrev = sArray.row(ii-1).t();
