@@ -25,7 +25,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       int BB = as<int>(BB_);
       
       // initialise normal random draw matrix
-      mat bmGrid = mat(TT,BB,fill::randn);
+      // mat bmGrid = mat(TT,BB,fill::randn);
       
       // Initialise stock and variance factor matrices for return. They have to have one row more than target sim length so that you can initialise and discard nicely.
       int simLength = TT;
@@ -48,7 +48,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       
       //    Rcout << "dt, dtsqrt" << dt << " " << dtSqrt << "\n";
       // scale Normal increments by sqrt(dt)
-      bmGrid *= dtSqrt;
+      // bmGrid *= dtSqrt;
       // Rcout << bmGrid;
       
       // Walk through the parList argument and create vectors which load on stuff in propagation equations
@@ -96,6 +96,9 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         // count where you are in sample
         cumdt += dt;
         
+        // generate random normals
+        mat bmGrid = mat(1,BB,fill::randn);
+        
         // set previous values
         sPrev = sArray.row(ii-1).t();
         vPrev = vArray.row(ii-1).t();
@@ -110,15 +113,15 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         // multiply by dt
         dLogS = dLogS * dt;
         // Brownian innovations to dLogS, first for BMs correlated with those that drive variance factors
-        dLogS += bmGrid.submat(ii-1,0,ii-1,BB/2-1) * (stockVdWTerms % sqrt(vPrev));
+        dLogS += bmGrid.submat(0,0,0,BB/2-1) * (stockVdWTerms % sqrt(vPrev));
         //Rcout << "Line 216 dLogS: " << dLogS << "\n";
         // Brownian innovations to dLogS, for BMs uncorrelated with those that drive variance factors
-        dLogS += bmGrid.submat(ii-1,BB/2,ii-1,BB-1) * (stockVdWortTerms % sqrt(vPrev));
+        dLogS += bmGrid.submat(0,BB/2,0,BB-1) * (stockVdWortTerms % sqrt(vPrev));
         
         //// vol increment without jumps
         dv = volDtTerms.t() * oneVec * dt;
         dv += volVdtTerms.t() * vPrev * dt;
-        dv += pow(volVdWTerms.t() * vPrev,0.5) % bmGrid.submat(ii-1,0,ii-1,BB/2-1).t();
+        dv += pow(volVdWTerms.t() * vPrev,0.5) % bmGrid.submat(0,0,0,BB/2-1).t();
         
         // Is there a jump? Generate, if yes
         jmpProb = 1.0 - exp(-instIntensity(0) * dt);
