@@ -9,8 +9,8 @@ affineCFderivsEvalCpp <- function(coeffs, stateMat) {
     .Call('affineModelR_affineCFderivsEvalCpp', PACKAGE = 'affineModelR', coeffs, stateMat)
 }
 
-affineSimulateCpp <- function(TT_, BB_, parList_, dt_, initVals_, genPtr_) {
-    .Call('affineModelR_affineSimulateCpp', PACKAGE = 'affineModelR', TT_, BB_, parList_, dt_, initVals_, genPtr_)
+affineSimulateCpp <- function(TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_) {
+    .Call('affineModelR_affineSimulateCpp', PACKAGE = 'affineModelR', TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_)
 }
 
 #' @export

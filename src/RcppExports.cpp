@@ -33,8 +33,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // affineSimulateCpp
-List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVals_, SEXP genPtr_);
-RcppExport SEXP affineModelR_affineSimulateCpp(SEXP TT_SEXP, SEXP BB_SEXP, SEXP parList_SEXP, SEXP dt_SEXP, SEXP initVals_SEXP, SEXP genPtr_SEXP) {
+List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVals_, SEXP genPtr_, SEXP retainIndex_);
+RcppExport SEXP affineModelR_affineSimulateCpp(SEXP TT_SEXP, SEXP BB_SEXP, SEXP parList_SEXP, SEXP dt_SEXP, SEXP initVals_SEXP, SEXP genPtr_SEXP, SEXP retainIndex_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -44,7 +44,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type dt_(dt_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type initVals_(initVals_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type genPtr_(genPtr_SEXP);
-    __result = Rcpp::wrap(affineSimulateCpp(TT_, BB_, parList_, dt_, initVals_, genPtr_));
+    Rcpp::traits::input_parameter< SEXP >::type retainIndex_(retainIndex_SEXP);
+    __result = Rcpp::wrap(affineSimulateCpp(TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_));
     return __result;
 END_RCPP
 }

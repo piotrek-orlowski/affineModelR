@@ -9,7 +9,7 @@ affineSimulate(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   jumpGeneratorPtr = getPointerToGenerator(fstr = "expNormJumpTransform"),
   jumpTransformPtr = getPointerToJumpTransform(fstr =
   "expNormJumpTransform")$TF, mod.type = "standard",
-  specMaker = ODEstructsForSim, nrepl = 1, burn.in = 0, ...)
+  specMaker = ODEstructsForSim, nrepl = 1, ...)
 }
 \arguments{
 \item{paramsList}{A list containing fields \code{P} and \code{Q}, containing, respectively, the P and Q parameters.}
@@ -29,8 +29,6 @@ affineSimulate(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
 \item{rf.rate}{Assumed constant risk-free rate (annualized, continuously compounded)}
 
 \item{specMaker}{function that takes arguments \code{params.P}, \code{params.Q}, \code{jumpTransform}, \code{N.factors}, \code{rf.rate}, \code{mod.type} and potentially more via the ellipsis operator (\code{...}) and returns the DPS matrices. See documentation of \link{ODEstructs}.}
-
-\item{burn.in}{numeric, how many observations should be simulated before we take the sample -- to depart from the initial conditions.}
 
 \item{jumpTransform}{The function that calculates the jump Laplace transform}
 }
