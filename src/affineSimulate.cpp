@@ -32,9 +32,9 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       int simWidth = 1;
       // mat sArray = mat(simLength+1, simWidth, fill::zeros);
       // mat vArray = mat(simLength+1,(BB/2)*simWidth, fill::zeros);
-      mat sArray = mat(retainIndex.size()+1, simWidth, fill::zeros);
-      mat vArray = mat(retainIndex.size()+1,(BB/2)*simWidth, fill::zeros);
-      vec jumpMarks = vec(retainIndex.size()+1, fill::zeros);
+      mat sArray = mat(retainIndex.size(), simWidth, fill::zeros);
+      mat vArray = mat(retainIndex.size(),(BB/2)*simWidth, fill::zeros);
+      vec jumpMarks = vec(retainIndex.size(), fill::zeros);
       vec jumpValues(1+BB/2,fill::zeros);
       
       // mat sArrayTemp = mat(1, simWidth, fill::zeros);
@@ -92,7 +92,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       // Count jumps
       int numJumps = 0;
       double cumdt = 0;
-      arma::mat jumpSizes(jmpLength,retainIndex.size()+1,arma::fill::zeros);
+      arma::mat jumpSizes(jmpLength,retainIndex.size(),arma::fill::zeros);
       
       // Count iterations so that you know when to retain
       int iterationCounter = 1L;

@@ -33,7 +33,7 @@ affineSimulate(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
 \item{jumpTransform}{The function that calculates the jump Laplace transform}
 }
 \value{
-A list containing the simulated stock & volatility paths + stock price jump times
+A list containing the simulated stock & volatility paths + stock price jump times + a time index
 }
 \description{
 This function simulates paths from a stochastic volatility model with three volatility factors. One of the factors and the underlying asset prices can co-jump. The jump specification follows Duffie, Pan and Singleton (2000), p. 1361.
