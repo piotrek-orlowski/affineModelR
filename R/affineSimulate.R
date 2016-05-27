@@ -119,5 +119,5 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   # S.array <- do.call(what = abind, args = S.array.list)
   numJumps <- do.call(what = c, args = as.list(numJumpsList))
   
-  return(list(times = seq(0+day.offset,t.days+day.offset,by=dt.loc), sim.arrays = simArraysList, dt=dt/252, numJumps = numJumps, jumpSizes = jumpTimesList))
+  return(list(times = seq(0+day.offset,t.days+day.offset-dt.loc,by=dt.loc), sim.arrays = simArraysList, dt=dt/252, numJumps = numJumps, jumpSizes = jumpTimesList))
 }
