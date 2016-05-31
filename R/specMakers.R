@@ -28,6 +28,22 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   
   ### Prepare the P terms.dt
   if(doP){
+    # if orthogonal erp not defined, then let's assume it is 0
+    if (is.null(params.P[[as.character(1)]]$erp)) {
+      params.P[[as.character(1)]]$erp <- 0
+    }
+    if (is.null(params.P[[as.character(1)]]$erp0)) {
+      params.P[[as.character(1)]]$erp0 <- 0
+    }
+    
+    if(N.factors > 1){
+      for(kk in 2:N.factors){
+        if(is.null(params.P[[as.character(nn)]]$erp)){
+          params.P[[as.character(kk)]]$erp <- params.P[[as.character(1)]]$erp
+        }
+      }
+    }
+    
     for(nn in 1:N.factors){
       loc.g1 <- -(params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta - params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta) / params.P[[as.character(nn)]]$lmb[1]
       #     print(loc.g1)
@@ -47,7 +63,7 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     for(nn in 1:N.factors){
       loc.g2 <- -(params.P[[as.character(nn)]]$kpp - params.Q[[as.character(nn)]]$kpp)/params.P[[as.character(nn)]]$lmb[1]
       #     print(loc.g2)
-      terms.vdt[[nn]] <- terms.vdt[[nn]] + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g2 + params.P[[as.character(nn)]]$phi * sqrt(1 - params.P[[as.character(nn)]]$rho^2) * params.P[[as.character(1)]]$erp
+      terms.vdt[[nn]] <- terms.vdt[[nn]] + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g2 +  params.P[[as.character(nn)]]$erp
     }
     terms.vdt[[1]] <- terms.vdt[[1]] + params.P[[as.character(1)]]$erp0
   }
