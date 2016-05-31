@@ -37,9 +37,9 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     }
     
     if(N.factors > 1){
-      for(kk in 2:N.factors){
+      for(nn in 2:N.factors){
         if(is.null(params.P[[as.character(nn)]]$erp)){
-          params.P[[as.character(kk)]]$erp <- params.P[[as.character(1)]]$erp
+          params.P[[as.character(nn)]]$erp <- 0
         }
       }
     }
@@ -50,6 +50,7 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
       terms.dt <- terms.dt + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g1
     }
   }
+  terms.dt <- terms.dt + params.P[[as.character(1)]]$erp0
   
   # terms.vdt: what in the stock price equation is multiplied by vt*dt
   ### Q terms.vdt
@@ -65,7 +66,7 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
       #     print(loc.g2)
       terms.vdt[[nn]] <- terms.vdt[[nn]] + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g2 +  params.P[[as.character(nn)]]$erp
     }
-    terms.vdt[[1]] <- terms.vdt[[1]] + params.P[[as.character(1)]]$erp0
+    # terms.vdt[[1]] <- terms.vdt[[1]] + params.P[[as.character(1)]]$erp0
   }
   
   ### terms.vdW: what gets multiplied by the sqrt of vol state and by BM driver. Identical under P and Q
