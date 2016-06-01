@@ -60,7 +60,7 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
   if(N.factors > 1){
     for(kk in 2:N.factors){
       if(is.null(params.P[[as.character(nn)]]$erp)){
-        params.P[[as.character(kk)]]$erp <- params.P[[as.character(1)]]$erp
+        params.P[[as.character(kk)]]$erp <- 0
       }
     }
   }
