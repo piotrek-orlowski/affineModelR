@@ -28,11 +28,12 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   
   ### Prepare the P terms.dt
   if(doP){
-    for(nn in 1:N.factors){
-      loc.g1 <- -(params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta - params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta) / params.P[[as.character(nn)]]$lmb[1]
+    # for(nn in 1:N.factors){
+      # loc.g1 <- -(params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta - params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta) / params.P[[as.character(nn)]]$lmb[1]
       #     print(loc.g1)
-      terms.dt <- terms.dt + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g1
-    }
+      # terms.dt <- terms.dt + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g1
+    # }
+    terms.dt <- terms.dt + params.P[[as.character(1)]]$erp0
   }
   
   # terms.vdt: what in the stock price equation is multiplied by vt*dt
@@ -45,9 +46,10 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   ### P terms.vdt: two risk-premium components, one from the erp parameter -- price of risk on the stock-specific BM, the other from the price of variance risk through the leverage effect, price of risk on the variance-specific BM
   if(doP){
     for(nn in 1:N.factors){
-      loc.g2 <- -(params.P[[as.character(nn)]]$kpp - params.Q[[as.character(nn)]]$kpp)/params.P[[as.character(nn)]]$lmb[1]
+      # loc.g2 <- -(params.P[[as.character(nn)]]$kpp - params.Q[[as.character(nn)]]$kpp)/params.P[[as.character(nn)]]$lmb[1]
       #     print(loc.g2)
-      terms.vdt[[nn]] <- terms.vdt[[nn]] + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g2 + params.P[[as.character(nn)]]$phi * sqrt(1 - params.P[[as.character(nn)]]$rho^2) * params.P[[as.character(1)]]$erp
+      # terms.vdt[[nn]] <- terms.vdt[[nn]] + params.P[[as.character(nn)]]$phi * params.P[[as.character(nn)]]$rho * loc.g2 +  params.P[[as.character(nn)]]$erp
+      terms.vdt[[nn]] <- terms.vdt[[nn]] +  params.P[[as.character(nn)]]$erp
     }
     terms.vdt[[1]] <- terms.vdt[[1]] + params.P[[as.character(1)]]$erp0
   }
