@@ -57,6 +57,14 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
     params.P[[as.character(1)]]$erp0 <- 0
   }
   
+  if(N.factors > 1){
+    for(kk in 2:N.factors){
+      if(is.null(params.P[[as.character(nn)]]$erp)){
+        params.P[[as.character(kk)]]$erp <- 0
+      }
+    }
+  }
+  
   ode.structs.P <- ODEstructs(params.P,jumpTransform,mkt,N.factors,mod.type)
   ode.structs.Q <- ODEstructs(params.Q,jumpTransform,mkt,N.factors,mod.type)
   
@@ -75,10 +83,10 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
     eta.P <- params.P[[as.character(nn)]]$eta
     eta.Q <- params.Q[[as.character(nn)]]$eta
     
-    ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] +  phi * rho * (kpp.Q - kpp.P) / lmb[1] 
-    ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] + phi * sqrt(1-rho^2) * params.P[[as.character(1)]]$erp
+    # ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] +  phi * rho * (kpp.Q - kpp.P) / lmb[1] 
+    ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] + params.P[[as.character(nn)]]$erp
     # add the constant part of the erp that is due to the vrp
-    ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
+    # ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
   }
   # add identically constant part of the erp
   ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp0
@@ -115,6 +123,14 @@ odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, ato
       params.P[[as.character(1)]]$erp0 <- 0
     }
     
+    if(N.factors > 1){
+      for(kk in 2:N.factors){
+        if(is.null(params.P[[as.character(nn)]]$erp)){
+          params.P[[as.character(kk)]]$erp <- params.P[[as.character(1)]]$erp
+        }
+      }
+    }
+    
     ode.structs.P <- ODEstructs(params.P,jumpTransform,mkt,N.factors,mod.type)
     ode.structs.Q <- ODEstructs(params.Q,jumpTransform,mkt,N.factors,mod.type)
     
@@ -133,10 +149,10 @@ odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, ato
       eta.P <- params.P[[as.character(nn)]]$eta
       eta.Q <- params.Q[[as.character(nn)]]$eta
       
-      ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] +  phi * rho * (kpp.Q - kpp.P) / lmb[1] 
-      ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] + phi * sqrt(1-rho^2) * params.P[[as.character(1)]]$erp
+      # ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] +  phi * rho * (kpp.Q - kpp.P) / lmb[1] 
+      ode.structs.P$K1[1,1+nn] <- ode.structs.P$K1[1,1+nn] + params.P[[as.character(nn)]]$erp
       # add the constant part of the erp that is due to the vrp
-      ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
+      # ode.structs.P$K0[1] <- ode.structs.P$K0[1] + phi * rho * (kpp.P * eta.P - kpp.Q * eta.Q) / lmb[1]
     }
     # add identically constant part of the erp
     ode.structs.P$K0[1] <- ode.structs.P$K0[1] + params.P[[as.character(1)]]$erp0
