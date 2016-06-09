@@ -58,6 +58,8 @@ solveExtendedODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, mf = 22, rtol=1e-1
   # make correction for the part of drift implied by (r-q) (interest rate less dividend yield)
   drift.mat <- array(0, dim= dim(solMat))
   drift.mat[,,N.factors+1] <- u[,1,drop= FALSE] %*% matrix(mkt$t*(mkt$r - mkt$q), nrow= 1)
+  # first deriv
+  drift.mat[,,2*(N.factors+1)] <- matrix(1,nrow = nrow(u), ncol = 1) %*% matrix(mkt$t*(mkt$r - mkt$q), nrow= 1)
   solMat <- solMat + drift.mat
   
   return(solMat)
