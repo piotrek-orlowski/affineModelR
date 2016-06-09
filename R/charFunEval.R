@@ -8,16 +8,26 @@
 #' @param v.0 \code{S x N.factors} matrix of volatility factor values
 #' @param jumpTransform string, name of function to evaluate the jumpTransform in the model
 #' @param N.factors number of stochastic volatility factors, 3 by default
+#' @param params.Q
+#' @param params.P parameter lists, see \code{\link{jumpDiffusionODEs}}
+#' @param t.vec numeric vector with maturities, see \code{mkt} below
+#' @param jumpTransform XPtr to jump transform (in \code{affineCF}, \code{affineCFderivsNumerical}) or list of Xptrs (in \code{affineCFderivs}). Pointers are recovered with \code{\link{getPointerToJumpTransform}} or can be provided by the user if they're willing to sweat.
+#' @param N.factors integer, number of SV factors
 #' @param CGF return Cumulant-Generating Function or Characteristic/Moment Generating Function? CGF if \code{TRUE}. Log of CF if \code{u} is complex.
+#' @param mkt \code{data.frame} with fields \code{p=1} (deprecated), \code{r} (interest rate), \code{q} (dividend yield) and \code{t} maturity, same as \code{t.vec}, uf \code{NULL}, replaced with \code{r=0} and \code{q=0}
 #' @param ... Further arguments passed to \code{\link{solveODE}}
 #' @export affineCF
 #' @return \code{affineCF} evaluates the CF/CGF of an affine model under P or Q measures, at matrix \code{u} of size  \code{U x (N.factors+1)}, maturity vector \code{t.vec} of length \code{T}, and variance factor matrix of size \code{S x N.factors}. The result is a \code{U x T x S} matrix. \cr 
 #' \code{affineCFderivs} evaluates derivatives of the characteristic function with respect to its first argument via ODE solutions of an extended system. A list of length 4 is returned, each holding an \code{U x T x S} matrix. This is useful for calculating moments of log-returns.
 
-affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mod.type = "standard", ...){
+affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mod.type = "standard", mkt = NULL, ...){
   
   # define mkt
-  mkt <- data.frame(p=1,q=0,r=0,t=t.vec)
+  if(is.null(mkt)){
+    mkt <- data.frame(p=1,q=0,r=0,t=t.vec) 
+  } else if(is.null(t.vec)){
+    t.vec <- mkt$t
+  }
   
   # solve ODEs
   if(is.null(params.P)){
@@ -49,10 +59,14 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = g
 #' @export affineCFderivs
 #' @describeIn affineCFandDerivs
 
-affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 3, mod.type = 'standard', ...){
+affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 3, mod.type = 'standard', mkt = NULL, ...){
   
   # define mkt
-  mkt <- data.frame(p=1,q=0,r=0,t=t.vec)
+  if(is.null(mkt)){
+    mkt <- data.frame(p=1,q=0,r=0,t=t.vec) 
+  } else if(is.null(t.vec)){
+    t.vec <- mkt$t
+  }
   
   # solve ODEs
   ode.sol <- odeExtSolveWrap(u = u, params.Q = params.Q, params.P = params.P, mkt = mkt, N.factors = N.factors, jumpTransform = jumpTransform, mod.type = mod.type, ...)
@@ -121,7 +135,14 @@ affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransfo
 #' @export affineCFderivsNumerical
 #' @describeIn affineCFandDerivs
 
-affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type, ...){
+affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type, mkt = NULL, ...){
+  
+  # define mkt
+  if(is.null(mkt)){
+    mkt <- data.frame(p=1,q=0,r=0,t=t.vec) 
+  } else if(is.null(t.vec)){
+    t.vec <- mkt$t
+  }
   
   uu <- seq(-5*hh,5*hh,by=hh)
   u <- apply(u,1,function(u.row){
@@ -131,7 +152,7 @@ affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.
   })
   
   u <- matrix(u, nrow = length(u)/(N.factors+1), ncol = N.factors+1, byrow= FALSE)
-  cf.for.diff <- affineCF(u = u, params.Q = params.Q, params.P = params.P, t.vec = t.vec, v.0 = v.0, jumpTransform = jumpTransform, N.factors = dim(v.0)[2], CGF = FALSE, mod.type = mod.type)
+  cf.for.diff <- affineCF(u = u, params.Q = params.Q, params.P = params.P, t.vec = NULL, v.0 = v.0, jumpTransform = jumpTransform, N.factors = dim(v.0)[2], CGF = FALSE, mod.type = mod.type, mkt = mkt, ...)
   cf.d1 <- apply(X = cf.for.diff, MARGIN = c(2,3), FUN = function(cff){
     f0 <- cff[median(order(cff))]
     fVal <- cff[-median(order(cff))]
