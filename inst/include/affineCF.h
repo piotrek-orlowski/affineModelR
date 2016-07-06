@@ -8,11 +8,7 @@ using namespace Rcpp;
 arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, const bool retLog);
 
 arma::cube affineCFderivsEvalCpp(const arma::cube coeffs, const arma::mat stateMat);
-  
-// arma::cx_cube affineCFevalCpp(const arma::cx_cube& coeffs, const arma::mat& stateMat);
-// 
-// arma::cube affineCFderivsEvalCpp(const arma::cube& coeffs, const arma::mat& stateMat);
-// 
-// arma::cx_cube affineCFDerivsEvalCpp(const arma::cx_cube& coeffs, const arma::mat& stateMat);
+
+arma::cx_cube affineCFevalCpp(const arma::cx_cube coeffs, const arma::mat stateMat, const bool retLog);  
 
 #endif

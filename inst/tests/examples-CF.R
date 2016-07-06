@@ -17,10 +17,12 @@ u.ret <- cbind(seq(-2,2,by=0.01),0) # The first argument is for the stock return
 
 t.vec <- 1 # plotting horizon is 1 Year
 
+mkt <- data.frame(t=t.vec,r=0.03,q=0,p=1)
+
 v.0 <- matrix(c(1,3),nrow = 2,ncol = 1) # We will plot the MGF at factor values 1 (the long-run mean) and 3 (a very high value)
 
 # We will plot the risk-neutral MGF, thus params.P = NULL.
-cf.ret <- affineCF(u = u.ret, params.Q = parListHeston$Q, params.P = NULL, t.vec = t.vec, v.0 = v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, N.factors = 1, CGF = FALSE)
+cf.ret <- affineCF(u = u.ret, params.Q = parListHeston$Q, params.P = NULL, t.vec = NULL, v.0 = v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, N.factors = 1, CGF = FALSE, mkt = mkt)
 
 # Take the real part
 cf.ret <- Re(cf.ret)
