@@ -94,7 +94,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // jumpTransform
-std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+arma::cx_colvec jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_jumpTransform(SEXP betaSEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -142,7 +142,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kouExpTransform
-std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+arma::cx_colvec kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_kouExpTransform(SEXP betaSEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -190,7 +190,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // jt2010_transform_CJ
-std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+arma::cx_colvec jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_jt2010_transform_CJ(SEXP betaSEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -202,7 +202,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // jt2010_transform_CJ_VJ
-std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+arma::cx_colvec jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_jt2010_transform_CJ_VJ(SEXP betaSEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -210,6 +210,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(jt2010_transform_CJ_VJ(beta, jmpPar));
+    return __result;
+END_RCPP
+}
+// jumpTransform_1sidedExp
+arma::cx_colvec jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP affineModelR_jumpTransform_1sidedExp(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(jumpTransform_1sidedExp(beta, jmpPar));
     return __result;
 END_RCPP
 }
@@ -260,7 +272,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // evaluateTransform
-std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar);
+arma::cx_colvec evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_evaluateTransform(SEXP genPtr_SEXP, SEXP betaSEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

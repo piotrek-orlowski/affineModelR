@@ -108,10 +108,6 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         bmGrid *= dtSqrt;
         
         // set previous values
-        // sPrev = sArray.row(ii-1).t();
-        // sPrev = sArrayTemp.row(0).t();
-        // vPrev = vArray.row(ii-1).t();
-        // vPrev = vArrayTemp.row(0).t();
         vPrevInt.rows(1,BB/2) = vPrev;
         // current jump intensity
         instIntensity = intensity.t() * vPrevInt;

@@ -127,7 +127,5 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     }
   }
   
-  #  intensity.terms <- c(params.P$jmp$lvec,params.P$jmp$lprop)
-  
   return(list(terms.dt = terms.dt, terms.vdt = terms.vdt, terms.vdW = terms.vdW, terms.vdWort = terms.vdWort, vterms.dt = vterms.dt, vterms.vdt = vterms.vdt, vterms.vdW = vterms.vdW, jmpPar = jmpPar, intensity.terms = terms.intensity))
 }

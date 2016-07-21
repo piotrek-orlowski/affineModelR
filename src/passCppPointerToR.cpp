@@ -70,11 +70,13 @@ arma::vec evaluateGenerator(SEXP genPtr_, arma::vec jmpPar){
 
 //'@export
 //[[Rcpp::export]]
-std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar){
+arma::cx_colvec evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar){
+// std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar){
   // Get the jump generator pointer
   Rcpp::XPtr<cmpFuncPtr> genPtr(genPtr_);
   cmpFuncPtr genFoo = *genPtr;
-  std::complex<double> tfVal = genFoo(beta,jmpPar);
+  // std::complex<double> tfVal = genFoo(beta,jmpPar);
+  arma::cx_colvec tfVal = genFoo(beta,jmpPar);
   return(tfVal);
 }
 

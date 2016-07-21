@@ -45,8 +45,10 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   cx_vec K0 = Rcpp::as<arma::cx_vec>(D["K0"]);
   
   // initalize scalars corresponding to jump intensities
-  NumericVector L1 = Rcpp::as<NumericVector>(D["l1"]);
-  colvec l1 = vec(L1.begin(),Nfactors+1,false);
+  // NumericVector L1 = Rcpp::as<NumericVector>(D["l1"]);
+  // colvec l1 = vec(L1.begin(),Nfactors+1,false);
+  NumericMatrix L1 = Rcpp::as<NumericMatrix>(D["l1"]);
+  mat l1 = mat(L1.begin(),Nfactors+1, Nfactors+1, false);
   
   NumericVector L0 = Rcpp::as<NumericVector>(D["l0"]);
   colvec l0(L0.begin(),1,false);
@@ -62,14 +64,20 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   cx_colvec beta(y,Nfactors+1,false);
 
   // calculate jump transform
-  complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
+  // complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
+  cx_colvec jmpTr = jumpTrFoo(beta,jmpPar);
   // complex<double> jmpTr = jumpTransform(beta,muYc,sigmaYc,muSc,rhoc);
   
   cx_colvec yRes = trans(K1) * beta;
   
   for (int i=0;i<Nfactors+1;i++) {
     ydot[i] = yRes[i];
-    ydot[i] += l1(i) * jmpTr;
+  }
+  
+  for(int m = 0; m < jmpTr.n_rows; m++){
+    for (int i=0;i<Nfactors+1;i++) {
+      ydot[i] += l1(i,m) * jmpTr(m);
+    } 
   }
   
   // now add vol of vol
@@ -78,7 +86,10 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   }
   
   // now do the alpha
-  ydot[Nfactors+1] = (complex<double>) dot(K0,beta) + l0(0) * jmpTr;  
+  // ydot[Nfactors+1] = (complex<double>) dot(K0,beta) + l0(0) * jmpTr;  
+  for(int m = 0; m < jmpTr.n_rows; m++){
+    ydot[Nfactors+1] = (complex<double>) dot(K0,beta) + l0(m) * jmpTr(m);
+  }
 }
 
 extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<double> *ydot, double *yout, int *ip){
@@ -154,7 +165,8 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   betaTplPrime = yArma.subvec(3*(2+Nfactors),3*(2+Nfactors)+Nfactors);
   
   // calculate jump transform
-  complex<double> jmpTr;
+  // complex<double> jmpTr;
+  cx_colvec jmpTr;
   jmpTr = jumpTrFoo(beta,jmpPar);
   
   // three jump transform derivatives
@@ -178,11 +190,11 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   // main ODE: vol-of-vol and jumps
   for (int i=0;i<Nfactors+1;i++) {
     yRes(i) +=  0.5 * ((complex<double>) as_scalar(dot(strans(beta) * H1.slice(i),beta)));
-    yRes(i) += l1(i) * jmpTr;
+    yRes(i) += l1(i) * jmpTr(0);
   }
   
   // main ODE: alpha
-  yRes(Nfactors+1) = (complex<double>) dot(K0,beta) + l0(0) * jmpTr;
+  yRes(Nfactors+1) = (complex<double>) dot(K0,beta) + l0(0) * jmpTr(0);
   
   // first deriv ODE
   cx_colvec yResPrime(Nfactors+2);

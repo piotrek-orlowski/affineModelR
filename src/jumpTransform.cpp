@@ -4,7 +4,8 @@
 
 using namespace std;
 // [[Rcpp::export]]
-std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
+arma::cx_colvec jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
+// std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar) {
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -17,7 +18,10 @@ std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List 
     cf += c;
     cf = cf / (complex<double>(1,0) - c);
     
-    return(cf);
+    arma::cx_colvec cfRet(1);
+    cfRet(0) = cf;
+    
+    return(cfRet);
     
   } catch( std::exception& __ex__) {
     forward_exception_to_r(__ex__);
@@ -186,7 +190,8 @@ arma::cx_mat jumpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar
 
 // Kou-Exponential jump transform
 // [[Rcpp::export]]
-std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+arma::cx_colvec kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+// std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
   try{
     double muYc = Rcpp::as<double>(jmpPar["muYc"]);
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
@@ -198,7 +203,10 @@ std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::Lis
     complex<double> cf = muSc * exp(beta(0) * muYc);
     cf = cf / c - complex<double>(1.0,0.0);
     
-    return(cf);
+    arma::cx_colvec cfRet(1);
+    cfRet(0) = cf;
+    
+    return(cfRet);
     
   } catch( std::exception& __ex__) {
     forward_exception_to_r(__ex__);
@@ -377,7 +385,8 @@ arma::cx_mat kouExpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpP
 
 // Jacod and Todorov (2010): doubly uniform jumps, co-jump only
 // [[Rcpp::export]]
-std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+arma::cx_colvec jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+// std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
   
   double l,h,d,u;
   l = Rcpp::as<double>(jmpPar["muYc"]);
@@ -419,12 +428,17 @@ std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp:
   
   cf -= 1.0;
   
-  return cf;
+  arma::cx_colvec cfRet(1);
+  cfRet(0) = cf;
+  
+  return cfRet;
 }
+
 
 // Jacod and Todorov (2010): doubly uniform jumps, co-jump and vol jump
 // [[Rcpp::export]]
-std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+arma::cx_colvec jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+// std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
   
   double l,h,d,u;
   l = Rcpp::as<double>(jmpPar["muYc"]);
@@ -481,5 +495,44 @@ std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rc
   
   cfvol -= 1.0;
   cf = 0.5 * cf + 0.5 * cfvol;
-  return cf;
+  
+  arma::cx_colvec cfRet(1);
+  cfRet(0) = cf;
+  
+  return cfRet;
 }
+
+// [[Rcpp::export]]
+arma::cx_colvec jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price jumps
+    double muInt = Rcpp::as<double>(jmpPar["muInt"]); // exponential parameter for intensity jump / 2nd vol jump
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
+    double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
+    double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
+    
+    // jump in the underlying and the first volatility factor can jumps
+    complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
+    
+    complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
+    cf /= (complex<double>(1,0) - c);
+    // cf += c;
+    // cf = cf / (complex<double>(1,0) - c);
+    
+    arma::cx_colvec cfRet(1);
+    cfRet(0) = cf - 1.0;
+    
+    // jump in the intensity factor and other volatility factor
+    cf = 1.0 / (1.0 - beta(2) * muInt) / (1.0 - beta(3) * muInt);
+    cfRet(0) += gammaProp * (cf-1.0);
+    // cfRet(0) /= (1.0 + gammaProp);
+    
+    return(cfRet);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+} 
