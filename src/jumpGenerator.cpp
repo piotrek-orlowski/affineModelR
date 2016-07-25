@@ -115,3 +115,36 @@ arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar){
   }
   return(res);
 }
+
+//' @export
+// [[Rcpp::export]]
+arma::vec generate_1sidedExp(arma::vec jmpPar){
+  
+  // jumps in underlying and all 3 factors
+  arma::vec res(4,arma::fill::zeros);
+  
+  // jump parameters
+  double stockJump = 1.0/jmpPar(0);
+  double volJump = 1.0/jmpPar(1);
+  double jmpRho = jmpPar(2);
+  double intJump = 1.0/jmpPar(3);
+  double vol2Jump = 1.0/jmpPar(4);
+  
+  // either asset/1st jump or 2nd/3rd jump
+  double gammaProp = jmpPar(5);
+  bool firstJump = arma::randu() <= 1.0/(1.0 + gammaProp);
+  
+  if(firstJump){
+    double vJmp = rexp(1, volJump)[0];
+    double sJmp = jmpRho * vJmp - rexp(1,stockJump)[0];
+    res(0) = sJmp;
+    res(1) = vJmp;
+  } else {
+    double iJmp = rexp(1, intJump)[0];
+    double v2Jmp = rexp(1,vol2Jump)[0];
+    res(2) = iJmp;
+    res(3) = v2Jmp;
+  }
+  
+  return(res);
+}

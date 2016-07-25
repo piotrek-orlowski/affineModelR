@@ -23,4 +23,6 @@ arma::cx_mat kouExpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpP
 std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 
 std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+
+std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 #endif

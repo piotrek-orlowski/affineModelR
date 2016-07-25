@@ -126,5 +126,5 @@ sim.paths <- affineSimulate(paramsList = parListHeston, N.factors = 1, t.days = 
 
 # Plot
 layout(t(c(1:2)))
-plot(sim.paths$S.array[,1], sim.paths$S.array[,2], type = 'l', xlab = 'day', ylab = 'Stock', main = 'Heston model \n stock price simulation')
-plot(sim.paths$V.array[,1], sim.paths$V.array[,2], type = 'l', xlab = 'day', ylab = 'Vol', main = 'Heston model \n volatility simulation')
+plot(sim.paths$times, sim.paths$sim.arrays[[1]]$S.array, type = 'l', xlab = 'day', ylab = 'Stock', main = 'Heston model \n stock price simulation')
+plot(sim.paths$times, sim.paths$sim.arrays[[1]]$V.array, type = 'l', xlab = 'day', ylab = 'Vol', main = 'Heston model \n volatility simulation')

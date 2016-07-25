@@ -15,6 +15,8 @@ SEXP getPointerToGenerator(std::string fstr) {
     return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_JT2010_cojump))));
   else if (fstr == "jacodTodorovCoJumpsVolJumps")
     return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_JT2010_cojump_voljump))));
+  else if (fstr == "oneSidedExponential")
+    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_1sidedExp))));
   else
     return Rcpp::wrap(Rcpp::XPtr<funcPtr>(R_NilValue)); // runtime error as NULL no XPtr
 }
@@ -53,8 +55,14 @@ SEXP getPointerToJumpTransform(std::string fstr) {
     );
     return(pointers);
   }
-  else
-    return Rcpp::wrap(Rcpp::XPtr<cmpFuncPtr>(R_NilValue)); // runtime error as NULL no XPtr
+  else if(fstr == "oneSidedExponential"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform_1sidedExp))
+    );
+    return(pointers);
+  } else{
+    return Rcpp::wrap(Rcpp::XPtr<cmpFuncPtr>(R_NilValue)); // runtime error as NULL no XPtr 
+  }
 }
 
 

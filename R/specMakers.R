@@ -82,12 +82,16 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     terms.intensity <- rep(0,N.factors + 1)
     terms.intensity[1] <- params.P$jmp$lvec
     terms.intensity[2:(N.factors+1)] <- params.P$jmp$lprop
-    jmpPar <- unlist(params.P$jmp[c("muYc","sigmaYc","muSc","rhoc")])
+    # jmpPar <- unlist(params.P$jmp[c("muYc","sigmaYc","muSc","rhoc")])
+    jmpPar <- unlist(params.P$jmp)
+    jmpPar <- jmpPar[!grepl(pattern = "lvec|lprop", x = names(jmpPar))]
   } else {
     terms.intensity <- rep(0,N.factors + 1)
     terms.intensity[1] <- params.Q$jmp$lvec
     terms.intensity[2:(N.factors+1)] <- params.Q$jmp$lprop
-    jmpPar <- unlist(params.Q$jmp[c("muYc","sigmaYc","muSc","rhoc")])
+    # jmpPar <- unlist(params.Q$jmp[c("muYc","sigmaYc","muSc","rhoc")])
+    jmpPar <- unlist(params.Q$jmp)
+    jmpPar <- jmpPar[!grepl(pattern = "lvec|lprop", x = names(jmpPar))]
   }
   
   ## volatility part

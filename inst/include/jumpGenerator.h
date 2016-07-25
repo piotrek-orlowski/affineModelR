@@ -11,4 +11,6 @@ arma::vec generate_JT2010_cojump(arma::vec jmpPar);
 
 arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar);
 
+arma::vec generate_1sidedExp(arma::vec jmpPar);
+
 #endif

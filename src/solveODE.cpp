@@ -63,7 +63,6 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
 
   // calculate jump transform
   complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
-  // complex<double> jmpTr = jumpTransform(beta,muYc,sigmaYc,muSc,rhoc);
   
   cx_colvec yRes = trans(K1) * beta;
   

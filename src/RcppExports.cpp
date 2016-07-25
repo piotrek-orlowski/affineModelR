@@ -93,6 +93,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// generate_1sidedExp
+arma::vec generate_1sidedExp(arma::vec jmpPar);
+RcppExport SEXP affineModelR_generate_1sidedExp(SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(generate_1sidedExp(jmpPar));
+    return __result;
+END_RCPP
+}
 // jumpTransform
 std::complex<double> jumpTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_jumpTransform(SEXP betaSEXP, SEXP jmpParSEXP) {
@@ -210,6 +221,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(jt2010_transform_CJ_VJ(beta, jmpPar));
+    return __result;
+END_RCPP
+}
+// jumpTransform_1sidedExp
+std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP affineModelR_jumpTransform_1sidedExp(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(jumpTransform_1sidedExp(beta, jmpPar));
     return __result;
 END_RCPP
 }

@@ -32,10 +32,6 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointer
   odeList$l0 <- l0
   odeList$l1 <- l1
   odeList$jmpPar <- jmp
-#   odeList$muYc <- jmp$muYc
-#   odeList$sigmaYc <- jmp$sigmaYc
-#   odeList$muSc <- jmp$muSc
-#   odeList$rhoc <- jmp$rhoc
   odeList$jumpTransformPtr <- jumpTransform
 
   # now solve for all frequencies
@@ -45,7 +41,7 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointer
     betaalpha0 <- c(u.vec,0)
     names(betaalpha0) <- c("c1",c(paste("b",1:N.factors,sep=""),"a"))
     
-    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivs2", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=150000)
+    sol <- zvode(betaalpha0, times=c(0,mkt$t), func = "derivs2", parms = odeList, dllname = "affineModelR", initfunc = "initmod",nout=0, mf=mf, rtol=rtol,atol=atol,maxsteps=1500000)
     solMat[uu,,] <- sol[-1,c(paste("b",1:N.factors,sep=""),"a")]
   }
   
