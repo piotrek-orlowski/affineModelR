@@ -82,8 +82,10 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     terms.intensity <- rep(0,N.factors + 1)
     terms.intensity[1] <- params.P$jmp$lvec
     terms.intensity[2:(N.factors+1)] <- params.P$jmp$lprop
-    # jmpPar <- unlist(params.P$jmp[c("muYc","sigmaYc","muSc","rhoc")])
     jmpPar <- unlist(params.P$jmp)
+    if("gammaProp" %in% names(jmpPar)){
+      terms.intensity <- terms.intensity * (1 + jmpPar$gammaProp)
+    }
     jmpPar <- jmpPar[!grepl(pattern = "lvec|lprop", x = names(jmpPar))]
     jmpPar <- as.list(jmpPar[order(names(jmpPar))])
   } else {
