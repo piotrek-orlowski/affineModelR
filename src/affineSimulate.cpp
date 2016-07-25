@@ -83,8 +83,8 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       // Generate vector for jump checks
       // NumericVector jumpCheckRcpp = runif(TT,0,1);
       // colvec jumpCheck(jumpCheckRcpp);
-      colvec jmpPar = as<colvec>(parList["jmpPar"]);
-      colvec jump = genFoo(jmpPar);
+      // colvec jmpPar = as<colvec>(parList["jmpPar"]);
+      colvec jump = genFoo(parList["jmpPar"]);
       int jmpLength = jump.n_elem;
       
       double jmpProb = 0.0;
@@ -139,7 +139,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         if(jumpCheck(0) < jmpProb){
           numJumps++;
           jumpMarks(iterationCounter) = cumdt;
-          jump = genFoo(jmpPar);
+          jump = genFoo(parList["jmpPar"]);
           jumpSizes.col(iterationCounter) += jump;
           
           dLogS += jump(0);

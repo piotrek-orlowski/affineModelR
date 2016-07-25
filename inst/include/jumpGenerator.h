@@ -3,14 +3,14 @@
 
 #include "RcppArmadillo.h"
 
-arma::vec generate_expNormJump(arma::vec jmpPar);
+arma::vec generate_expNormJump(Rcpp::List jmpPar);
 
-arma::vec generate_kouExpJump(arma::vec jmpPar);
+arma::vec generate_kouExpJump(Rcpp::List jmpPar);
 
-arma::vec generate_JT2010_cojump(arma::vec jmpPar);
+arma::vec generate_JT2010_cojump(Rcpp::List jmpPar);
 
-arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar);
+arma::vec generate_JT2010_cojump_voljump(Rcpp::List jmpPar);
 
-arma::vec generate_1sidedExp(arma::vec jmpPar);
+arma::vec generate_1sidedExp(Rcpp::List jmpPar);
 
 #endif

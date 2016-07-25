@@ -494,8 +494,8 @@ std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const R
     double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
     double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
     
-    // jump in the underlying and the first volatility factor can jumps
-    complex<double> c = muVol * beta(1) - rhoc * muVol * beta(0);
+    // jump in the underlying and the first volatility factor 
+    complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
     
     complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
     cf *= 1.0/(complex<double>(1,0) - c);

@@ -5,18 +5,18 @@ using namespace std;
 using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
-arma::vec generate_expNormJump(arma::vec jmpPar){
+arma::vec generate_expNormJump(Rcpp::List jmpPar){
   
   arma::vec res(2,arma::fill::zeros);
   
   arma::vec stockJumpMean(1);
-  stockJumpMean(0) = jmpPar(0);
+  stockJumpMean(0) = Rcpp::as<double>(jmpPar["muYc"]);
   arma::vec stockJumpVol(1);
-  stockJumpVol(0) = jmpPar(1);
+  stockJumpVol(0) = Rcpp::as<double>(jmpPar["sigmaYc"]);
   arma::vec volJumpMean(1);
-  volJumpMean(0) = 1.0/jmpPar(2);
+  volJumpMean(0) = 1.0/Rcpp::as<double>(jmpPar["muSc"]);
   arma::vec volJumpCorr(1);
-  volJumpCorr(0) = jmpPar(3);
+  volJumpCorr(0) = Rcpp::as<double>(jmpPar["rhoc"]);
   
   arma::vec tmpRnd(1);
   // Generate vol jump
@@ -35,17 +35,17 @@ arma::vec generate_expNormJump(arma::vec jmpPar){
 
 //' @export
 // [[Rcpp::export]]
-arma::vec generate_kouExpJump(arma::vec jmpPar){
+arma::vec generate_kouExpJump(Rcpp::List jmpPar){
   
   arma::vec res(2,arma::fill::zeros);
   arma::vec stockJumpMean(1);
-  stockJumpMean(0) = jmpPar(0);
+  stockJumpMean(0) = Rcpp::as<double>(jmpPar["muYc"]);
   arma::vec stockJumpVol(1);
-  stockJumpVol(0) = jmpPar(1);
+  stockJumpVol(0) = Rcpp::as<double>(jmpPar["sigmaYc"]);
   arma::vec volJumpMean(1);
-  volJumpMean(0) = jmpPar(2);
+  volJumpMean(0) = Rcpp::as<double>(jmpPar["muSc"]);
   arma::vec volJumpCorr(1);
-  volJumpCorr(0) = jmpPar(3);
+  volJumpCorr(0) = Rcpp::as<double>(jmpPar["rhoc"]);
   
   arma::vec tmpRnd(1);
   arma::ivec coinFlip(1);
@@ -73,25 +73,25 @@ arma::vec generate_kouExpJump(arma::vec jmpPar){
 
 //' @export
 // [[Rcpp::export]]
-arma::vec generate_JT2010_cojump(arma::vec jmpPar){
+arma::vec generate_JT2010_cojump(Rcpp::List jmpPar){
   // This is Jacod and Todorov 2010, Do Price and Volatility Jump Together -- co-jumps only
   arma::vec res(2,arma::fill::zeros);
   
   // in jmpPar the first two are l and h, the last two are d and u
-  res(0) = jmpPar(0) + jmpPar(1) * arma::randu();
+  res(0) = Rcpp::as<double>(jmpPar["muYc"]) + Rcpp::as<double>(jmpPar["sigmaYc"]) * arma::randu();
   arma::vec svec(1);
   svec(0) = arma::randu() - 0.5;
   svec = arma::sign(svec);
   res(0) *= svec(0);
   
-  res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+  res(1) = Rcpp::as<double>(jmpPar["muSc"]) + Rcpp::as<double>(jmpPar["rhoc"]) * arma::randu();
   
   return(res);
 }
 
 //' @export
 // [[Rcpp::export]]
-arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar){
+arma::vec generate_JT2010_cojump_voljump(Rcpp::List jmpPar){
   
   // This is Jacod and Todorov 2010, Do Price and Volatility Jump Together -- co-jumps and pure vol jumps
   arma::vec res(2,arma::fill::zeros);
@@ -102,36 +102,36 @@ arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar){
   
   // in jmpPar the first two are l and h, the last two are d and u
   if(covec(0) <= 0){
-    res(0) = jmpPar(0) + jmpPar(1) * arma::randu();
+    res(0) = Rcpp::as<double>(jmpPar["muYc"]) + Rcpp::as<double>(jmpPar["sigmaYc"]) * arma::randu();
     arma::vec svec(1);
     svec(0) = arma::randu() - 0.5;
     svec = arma::sign(svec);
     res(0) *= svec(0);
     
-    res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+    res(1) = Rcpp::as<double>(jmpPar["muSc"]) + Rcpp::as<double>(jmpPar["rhoc"]) * arma::randu();
   } else {
     res(0) = 0.0;
-    res(1) = jmpPar(2) + jmpPar(3) * arma::randu();
+    res(1) = Rcpp::as<double>(jmpPar["muSc"]) + Rcpp::as<double>(jmpPar["rhoc"]) * arma::randu();
   }
   return(res);
 }
 
 //' @export
 // [[Rcpp::export]]
-arma::vec generate_1sidedExp(arma::vec jmpPar){
+arma::vec generate_1sidedExp(Rcpp::List jmpPar){
   
   // jumps in underlying and all 3 factors
   arma::vec res(4,arma::fill::zeros);
   
   // jump parameters
-  double stockJump = 1.0/jmpPar(0);
-  double volJump = 1.0/jmpPar(1);
-  double jmpRho = jmpPar(2);
-  double intJump = 1.0/jmpPar(3);
-  double vol2Jump = 1.0/jmpPar(4);
+  double stockJump = 1.0/Rcpp::as<double>(jmpPar["muStock"]);
+  double volJump = 1.0/Rcpp::as<double>(jmpPar["muVol"]);
+  double jmpRho = Rcpp::as<double>(jmpPar["rhoc"]);
+  double intJump = 1.0/Rcpp::as<double>(jmpPar["muInt"]);
+  double vol2Jump = 1.0/Rcpp::as<double>(jmpPar["muVol2"]);
   
   // either asset/1st jump or 2nd/3rd jump
-  double gammaProp = jmpPar(5);
+  double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]);
   bool firstJump = arma::randu() <= 1.0/(1.0 + gammaProp);
   
   if(firstJump){

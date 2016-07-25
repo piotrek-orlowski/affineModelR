@@ -50,56 +50,56 @@ BEGIN_RCPP
 END_RCPP
 }
 // generate_expNormJump
-arma::vec generate_expNormJump(arma::vec jmpPar);
+arma::vec generate_expNormJump(Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_generate_expNormJump(SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(generate_expNormJump(jmpPar));
     return __result;
 END_RCPP
 }
 // generate_kouExpJump
-arma::vec generate_kouExpJump(arma::vec jmpPar);
+arma::vec generate_kouExpJump(Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_generate_kouExpJump(SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(generate_kouExpJump(jmpPar));
     return __result;
 END_RCPP
 }
 // generate_JT2010_cojump
-arma::vec generate_JT2010_cojump(arma::vec jmpPar);
+arma::vec generate_JT2010_cojump(Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_generate_JT2010_cojump(SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(generate_JT2010_cojump(jmpPar));
     return __result;
 END_RCPP
 }
 // generate_JT2010_cojump_voljump
-arma::vec generate_JT2010_cojump_voljump(arma::vec jmpPar);
+arma::vec generate_JT2010_cojump_voljump(Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_generate_JT2010_cojump_voljump(SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(generate_JT2010_cojump_voljump(jmpPar));
     return __result;
 END_RCPP
 }
 // generate_1sidedExp
-arma::vec generate_1sidedExp(arma::vec jmpPar);
+arma::vec generate_1sidedExp(Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_generate_1sidedExp(SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(generate_1sidedExp(jmpPar));
     return __result;
 END_RCPP
@@ -271,13 +271,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // evaluateGenerator
-arma::vec evaluateGenerator(SEXP genPtr_, arma::vec jmpPar);
+arma::vec evaluateGenerator(SEXP genPtr_, Rcpp::List jmpPar);
 RcppExport SEXP affineModelR_evaluateGenerator(SEXP genPtr_SEXP, SEXP jmpParSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type genPtr_(genPtr_SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type jmpPar(jmpParSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
     __result = Rcpp::wrap(evaluateGenerator(genPtr_, jmpPar));
     return __result;
 END_RCPP

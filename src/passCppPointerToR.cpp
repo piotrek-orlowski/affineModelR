@@ -68,7 +68,7 @@ SEXP getPointerToJumpTransform(std::string fstr) {
 
 //'@export
 //[[Rcpp::export]]
-arma::vec evaluateGenerator(SEXP genPtr_, arma::vec jmpPar){
+arma::vec evaluateGenerator(SEXP genPtr_, Rcpp::List jmpPar){
   // Get the jump generator pointer
   Rcpp::XPtr<funcPtr> genPtr(genPtr_);
   funcPtr genFoo = *genPtr;
