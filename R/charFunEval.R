@@ -8,7 +8,7 @@
 #' @param v.0 \code{S x N.factors} matrix of volatility factor values
 #' @param jumpTransform string, name of function to evaluate the jumpTransform in the model
 #' @param N.factors number of stochastic volatility factors, 3 by default
-#' @param params.Q
+#' @param params.Q parameter lists, see \code{\link{jumpDiffusionODEs}}
 #' @param params.P parameter lists, see \code{\link{jumpDiffusionODEs}}
 #' @param t.vec numeric vector with maturities, see \code{mkt} below
 #' @param jumpTransform XPtr to jump transform (in \code{affineCF}, \code{affineCFderivsNumerical}) or list of Xptrs (in \code{affineCFderivs}). Pointers are recovered with \code{\link{getPointerToJumpTransform}} or can be provided by the user if they're willing to sweat.
@@ -57,7 +57,7 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = g
 }
 
 #' @export affineCFderivs
-#' @describeIn affineCFandDerivs
+#' @rdname affineCFandDerivs
 
 affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 3, mod.type = 'standard', mkt = NULL, ...){
   
@@ -133,7 +133,7 @@ affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransfo
 }
 
 #' @export affineCFderivsNumerical
-#' @describeIn affineCFandDerivs
+#' @rdname affineCFandDerivs
 
 affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type, mkt = NULL, ...){
   

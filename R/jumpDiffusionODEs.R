@@ -36,7 +36,7 @@ jumpDiffusionODEs <- function(u,params,mkt,jumpTransform = getPointerToJumpTrans
   return(solMat)  
 }
 
-#' @describeIn jumpDiffODEs
+#' @rdname jumpDiffODEs
 #' @export jumpDiffusionODEsP
 
 jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, rtol=1e-13, atol=1e-30, mf = 22, N.factors = 3, mod.type = "standard") {
@@ -102,7 +102,7 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
   return(solMat)  
 }
 
-#' @describeIn jumpDiffODEs
+#' @rdname jumpDiffODEs
 #' @export odeExtSolveWrap
 
 odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, atol = 1e-30, mf = 12, N.factors = 3, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), mod.type = 'standard', ...){

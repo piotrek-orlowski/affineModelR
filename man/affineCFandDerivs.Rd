@@ -3,11 +3,22 @@
 \name{affineCFandDerivs}
 \alias{affineCF}
 \alias{affineCFandDerivs}
+\alias{affineCFderivs}
+\alias{affineCFderivsNumerical}
 \title{Characteristic function, moments, cumulant-generating function.}
 \usage{
 affineCF(u, params.Q, params.P = NULL, t.vec, v.0,
   jumpTransform = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
   N.factors = 3, CGF = FALSE, mod.type = "standard", mkt = NULL, ...)
+
+affineCFderivs(u, params.Q, params.P = NULL, t.vec, v.0,
+  jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),
+  N.factors = 3, mod.type = "standard", mkt = NULL, ...)
+
+affineCFderivsNumerical(u, params.Q, params.P = NULL, t.vec, v.0,
+  N.factors = 3, hh = 1e-04,
+  jumpTransform = getPointerToJumpTransform("expNormJumpTransform")$TF,
+  mod.type, mkt = NULL, ...)
 }
 \arguments{
 \item{u}{\code{U x (N.factors+1)} matrix of points at which the CF and its derivative should be evaluated.}
@@ -29,6 +40,8 @@ affineCF(u, params.Q, params.P = NULL, t.vec, v.0,
 \item{mkt}{\code{data.frame} with fields \code{p=1} (deprecated), \code{r} (interest rate), \code{q} (dividend yield) and \code{t} maturity, same as \code{t.vec}, uf \code{NULL}, replaced with \code{r=0} and \code{q=0}}
 
 \item{...}{Further arguments passed to \code{\link{solveODE}}}
+
+\item{params.Q}{parameter lists, see \code{\link{jumpDiffusionODEs}}}
 
 \item{params.P}{parameter lists, see \code{\link{jumpDiffusionODEs}}}
 

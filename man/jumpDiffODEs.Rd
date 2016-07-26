@@ -2,12 +2,24 @@
 % Please edit documentation in R/jumpDiffusionODEs.R
 \name{jumpDiffusionODEs}
 \alias{jumpDiffusionODEs}
+\alias{jumpDiffusionODEsP}
+\alias{odeExtSolveWrap}
 \title{ODE solver for jump diffusion models.}
 \usage{
 jumpDiffusionODEs(u, params, mkt,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform")$TF,
   rtol = 1e-12, atol = 1e-30, mf = 22, N.factors = 3,
   mod.type = "standard")
+
+jumpDiffusionODEsP(u, params.P, params.Q, mkt,
+  jumpTransform = getPointerToJumpTransform("expNormJumpTransform")$TF,
+  rtol = 1e-13, atol = 1e-30, mf = 22, N.factors = 3,
+  mod.type = "standard")
+
+odeExtSolveWrap(u, params.Q, params.P = NULL, mkt, rtol = 1e-12,
+  atol = 1e-30, mf = 12, N.factors = 3,
+  jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),
+  mod.type = "standard", ...)
 }
 \arguments{
 \item{u}{\code{Ux(N.factors+1)} matrix of complex numbers.}
