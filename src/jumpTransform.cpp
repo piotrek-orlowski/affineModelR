@@ -192,7 +192,7 @@ std::complex<double> kouExpTransform(const arma::cx_colvec beta, const Rcpp::Lis
     double sigmaYc = Rcpp::as<double>(jmpPar["sigmaYc"]);
     double rhoc = Rcpp::as<double>(jmpPar["rhoc"]);
     double muSc = Rcpp::as<double>(jmpPar["muSc"]);
-    // assumption is that only the underlying and the first volatility factor can jumps
+    // assumption is that only the underlying and the first volatility factor can jump
     complex<double> c = (pow(sigmaYc * beta(0),2.0) - complex<double>(1,0)) * (beta(1) - muSc + rhoc*beta(0));
     
     complex<double> cf = muSc * exp(beta(0) * muYc);
@@ -503,6 +503,35 @@ std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const R
     
     // jump in the intensity factor and other volatility factor
     cf += gammaProp * (1.0 / (1.0 - beta(2) * muInt) / (1.0 - beta(3) * muVol2) - 1.0);
+    
+    return(cf);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+std::complex<double> jumpTransform_1sidedExp_2(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price co-jumps
+    double muStock2 = Rcpp::as<double>(jmpPar["muStock2"]); // exponential parameter for individual jump in asset price
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
+    double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
+    double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
+    
+    // jump in the underlying and the first volatility factor 
+    complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
+    
+    complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
+    cf *= 1.0/(complex<double>(1,0) - c);
+    cf -= complex<double>(1,0);
+    
+    // jump in the intensity factor and other volatility factor
+    cf += gammaProp * (1.0 / (1.0 + beta(0) * muStock2) - complex<double>(1.0,0));
     
     return(cf);
     

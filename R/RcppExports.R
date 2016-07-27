@@ -82,6 +82,10 @@ jumpTransform_1sidedExp <- function(beta, jmpPar) {
     .Call('affineModelR_jumpTransform_1sidedExp', PACKAGE = 'affineModelR', beta, jmpPar)
 }
 
+jumpTransform_1sidedExp_2 <- function(beta, jmpPar) {
+    .Call('affineModelR_jumpTransform_1sidedExp_2', PACKAGE = 'affineModelR', beta, jmpPar)
+}
+
 #' @title Make Positive Definite
 #' @description Take a semi-positive definite matrix and use the eigenvalue decomposition to obtain the nearest positive definite matrix
 #' @param semiDefMat semi-pos-def matrix, symmetric

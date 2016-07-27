@@ -236,6 +236,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// jumpTransform_1sidedExp_2
+std::complex<double> jumpTransform_1sidedExp_2(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP affineModelR_jumpTransform_1sidedExp_2(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    __result = Rcpp::wrap(jumpTransform_1sidedExp_2(beta, jmpPar));
+    return __result;
+END_RCPP
+}
 // makePositiveDefinite
 arma::mat makePositiveDefinite(arma::mat& semiDefMat, double relEig);
 RcppExport SEXP affineModelR_makePositiveDefinite(SEXP semiDefMatSEXP, SEXP relEigSEXP) {

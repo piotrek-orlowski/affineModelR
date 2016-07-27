@@ -60,7 +60,12 @@ SEXP getPointerToJumpTransform(std::string fstr) {
       Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform_1sidedExp))
     );
     return(pointers);
-  } else{
+  } else if(fstr == "oneSidedExponential_2"){
+    pointers = Rcpp::List::create(
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform_1sidedExp_2))
+    );
+    return(pointers);
+  } else {
     return Rcpp::wrap(Rcpp::XPtr<cmpFuncPtr>(R_NilValue)); // runtime error as NULL no XPtr 
   }
 }
