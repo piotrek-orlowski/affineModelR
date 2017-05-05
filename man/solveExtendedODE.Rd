@@ -33,4 +33,3 @@ This function passes the ODE parameters, in a specification defined via \code{\l
 \details{
 This is an internal function not intended for the user.
 }
-

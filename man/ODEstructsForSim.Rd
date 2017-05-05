@@ -25,4 +25,3 @@ Return a list with elements \code{terms.dt}, \code{terms.vdt}, \code{terms.vdW},
 \description{
 Calculate vectors and matrices for propagation equations in a N-factor model with co-jumps in the underlying and the first volatility factor
 }
-

@@ -26,4 +26,3 @@ Calculation of coefficients for finite-difference approximation of derivative of
 \details{
 If p+k is odd, the finite difference scheme will be asymmetric, with one more point on the negative side.
 }
-

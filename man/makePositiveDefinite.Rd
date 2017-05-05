@@ -17,4 +17,3 @@ matrix size of semiDefMat
 \description{
 Take a semi-positive definite matrix and use the eigenvalue decomposition to obtain the nearest positive definite matrix
 }
-

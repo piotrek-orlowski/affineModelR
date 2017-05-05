@@ -61,4 +61,3 @@ The list \code{$jmp} has fields: \code{lvec} (double): jump intensity, constant 
 \cr \cr
 \code{mkt} data.frame describing maturities and corresponding interest rates, dividend yields. Fields: \code{p}: initial stock price, normalized to 1 without loss of generality, \code{q} dividend yield per annum, \code{r} interest rate, per annum, \code{t} maturity for which the ODE solutions are to be calculated.
 }
-

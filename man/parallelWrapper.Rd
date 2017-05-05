@@ -26,4 +26,3 @@ Parallelising calls to R functions in this package while using the pointer-passi
 \details{
 Further functions are ready parallel versions of the CF callers.
 }
-

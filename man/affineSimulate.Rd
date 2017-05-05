@@ -38,4 +38,3 @@ A list containing the simulated stock & volatility paths + stock price jump time
 \description{
 This function simulates paths from a stochastic volatility model with three volatility factors. One of the factors and the underlying asset prices can co-jump. The jump specification follows Duffie, Pan and Singleton (2000), p. 1361.
 }
-

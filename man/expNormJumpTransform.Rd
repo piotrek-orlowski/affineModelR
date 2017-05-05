@@ -20,4 +20,3 @@ non-vectorized jumpTransform of the DPS exponential-normal mixture
 \references{
 Duffie-Pan-Singleton (2000)
 }
-

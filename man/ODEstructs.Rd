@@ -24,4 +24,3 @@ This function translates the parameters lists (see \code{jumpDiffusionODEs}) to 
 \details{
 using \code{mod.type = "cascade.vol"} allows that the vol of vol of the first factor is an affine function of other factors. The constraint is that this factor can't have a leverage effect (i.e. its rho parameter must be 0), otherwise you're not in the affine setting.
 }
-
