@@ -2,7 +2,7 @@
 using namespace std;
 using namespace Rcpp;
 
-// [[Rcpp::export]]
+
 arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, const bool retLog){
   
   // Pull out coeffs dimensions for convenience
@@ -40,6 +40,7 @@ arma::cube affineCFevalCpp(const arma::cube coeffs, const arma::mat stateMat, co
   return cfVals;
 }
 
+// [[Rcpp::export]]
 arma::cx_cube affineCFevalCpp(const arma::cx_cube coeffs, const arma::mat stateMat, const bool retLog){
   
   // Pull out coeffs dimensions for convenience

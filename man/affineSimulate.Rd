@@ -6,7 +6,8 @@
 \usage{
 affineSimulate(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0,
-  jumpGeneratorPtr = getPointerToGenerator(fstr = "expNormJumpTransform"),
+  jumpGeneratorPtr = getPointerToGenerator(fstr =
+  "expNormJumpTransform"),
   jumpTransformPtr = getPointerToJumpTransform(fstr =
   "expNormJumpTransform")$TF, mod.type = "standard",
   specMaker = ODEstructsForSim, nrepl = 1, ...)

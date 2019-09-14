@@ -8,8 +8,9 @@
 \title{Characteristic function, moments, cumulant-generating function.}
 \usage{
 affineCF(u, params.Q, params.P = NULL, t.vec, v.0,
-  jumpTransform = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
-  N.factors = 3, CGF = FALSE, mod.type = "standard", mkt = NULL, ...)
+  jumpTransform = getPointerToJumpTransform(fstr =
+  "expNormJumpTransform")$TF, N.factors = 3, CGF = FALSE,
+  mod.type = "standard", mkt = NULL, ...)
 
 affineCFderivs(u, params.Q, params.P = NULL, t.vec, v.0,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),

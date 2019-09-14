@@ -6,7 +6,8 @@
 \usage{
 ODEstructsForSim(params.P = NULL, params.Q,
   jumpTransformPointer = getPointerToJumpTransform(fstr =
-  "expNormJumpTransform"), N.factors, rf.rate = 0, mod.type = "standard")
+  "expNormJumpTransform"), N.factors, rf.rate = 0,
+  mod.type = "standard")
 }
 \arguments{
 \item{params.P}{A structure containing the volatility factor + jump descriptions under measure P}

@@ -5,8 +5,9 @@
 \title{C++ extended ODE solve wraper}
 \usage{
 solveODE(u, mkt, K0, K1, l0, l1, H1, jmp,
-  jumpTransform = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
-  mf = 22, rtol = 1e-14, atol = 1e-30, N.factors = 3)
+  jumpTransform = getPointerToJumpTransform(fstr =
+  "expNormJumpTransform")$TF, mf = 22, rtol = 1e-14, atol = 1e-30,
+  N.factors = 3)
 }
 \arguments{
 \item{u}{u \code{Ux(N.factors+1)} matrix of complex numbers}
