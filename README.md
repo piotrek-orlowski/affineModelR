@@ -12,6 +12,28 @@ library(devtools)
 install_github(repo = "piotrek-orlowski/affineModelR")
 ```
 
+# RcppExports.cpp and registering dynamic symbols
+
+`r Rcpp::compileAttributes()` is run before the installation of an Rcpp package. In the resulting `.cpp` file, we have
+
+```
+RcppExport void R_init_affineModelR(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}
+```
+
+which has to be changed to 
+
+```
+RcppExport void R_init_affineModelR(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, TRUE);
+}
+```
+
+so that R has access to `C` routines for solving ODEs.
+
 # Use cases
 
 This package allows for calculating the values of the characteristic function in Affine Jump Diffusion models with an arbitrary number of factors and flexible jump specifications. The CF can be evaluated both under the statistical probability measure *P*, and the risk-neutral (pricing) measure *Q*. Knowledge of the characteristic function is equivalent to the knowledge of the distribution of a random variable.
