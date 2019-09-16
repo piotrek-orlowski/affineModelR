@@ -14,7 +14,7 @@ install_github(repo = "piotrek-orlowski/affineModelR")
 
 # RcppExports.cpp and registering dynamic symbols
 
-`r Rcpp::compileAttributes()` is run before the installation of an Rcpp package. In the resulting `.cpp` file, we have
+`Rcpp::compileAttributes()` is run before the installation of an Rcpp package. In the resulting `.cpp` file, we have
 
 ```
 RcppExport void R_init_affineModelR(DllInfo *dll) {
