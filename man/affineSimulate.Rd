@@ -4,13 +4,22 @@
 \alias{affineSimulate}
 \title{This function simulates paths from a stochastic volatility model with three volatility factors. One of the factors and the underlying asset prices can co-jump. The jump specification follows Duffie, Pan and Singleton (2000), p. 1361.}
 \usage{
-affineSimulate(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
-  freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0,
-  jumpGeneratorPtr = getPointerToGenerator(fstr =
-  "expNormJumpTransform"),
-  jumpTransformPtr = getPointerToJumpTransform(fstr =
-  "expNormJumpTransform")$TF, mod.type = "standard",
-  specMaker = ODEstructsForSim, nrepl = 1, ...)
+affineSimulate(
+  paramsList,
+  N.factors = 3,
+  t.days = 1,
+  t.freq = 1/78,
+  freq.subdiv = 24,
+  rng.seed = 42,
+  init.vals = NULL,
+  rf.rate = 0,
+  jumpGeneratorPtr = getPointerToGenerator(fstr = "expNormJumpTransform"),
+  jumpTransformPtr = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
+  mod.type = "standard",
+  specMaker = ODEstructsForSim,
+  nrepl = 1,
+  ...
+)
 }
 \arguments{
 \item{paramsList}{A list containing fields \code{P} and \code{Q}, containing, respectively, the P and Q parameters.}

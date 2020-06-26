@@ -4,10 +4,14 @@
 \alias{ODEstructsForSim}
 \title{Calculate vectors and matrices for propagation equations in a N-factor model with co-jumps in the underlying and the first volatility factor}
 \usage{
-ODEstructsForSim(params.P = NULL, params.Q,
-  jumpTransformPointer = getPointerToJumpTransform(fstr =
-  "expNormJumpTransform"), N.factors, rf.rate = 0,
-  mod.type = "standard")
+ODEstructsForSim(
+  params.P = NULL,
+  params.Q,
+  jumpTransformPointer = getPointerToJumpTransform(fstr = "expNormJumpTransform"),
+  N.factors,
+  rf.rate = 0,
+  mod.type = "standard"
+)
 }
 \arguments{
 \item{params.P}{A structure containing the volatility factor + jump descriptions under measure P}

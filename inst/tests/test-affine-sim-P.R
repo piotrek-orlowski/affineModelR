@@ -41,13 +41,15 @@ par.bates.svj1$P$`1`$erp <- 0
 par.bates.svj1$P$`1`$erp0 <- 0.15
 # par.bates.svj1$P$`1`$erp0 <- par.bates.svj1$Q$`1`$erp0 <- 0
 
-cf.b <- affineCFderivs(u = matrix(0,ncol=2,nrow=1), params.Q = par.bates.svj1$Q, params.P = par.bates.svj1$P, t.vec = 21/252, v.0 = matrix(1), jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 1, mod.type = 'standard', atol = 1e-28, rtol = 1e-12)
+cf.b <- affineCFderivs(u = matrix(0,ncol=2,nrow=1), params.Q = par.bates.svj1$Q, params.P = par.bates.svj1$P, t.vec = 21/252, v.0 = matrix(1e-2), jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 1, mod.type = 'standard', atol = 1e-28, rtol = 1e-12)
 cf.b <- unlist(cf.b)
 
-cf.bq <- affineCFderivs(u = matrix(0,ncol=2,nrow=1), params.Q = par.bates.svj1$Q, params.P = NULL, t.vec = 21/252, v.0 = matrix(1), jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 1, mod.type = 'standard', atol = 1e-28, rtol = 1e-12)
-cf.bq <- unlist(cf.1q)
+cf.bq <- affineCFderivs(u = matrix(0,ncol=2,nrow=1), params.Q = par.bates.svj1$Q, params.P = NULL, t.vec = 21/252, v.0 = matrix(1e-2), jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 1, mod.type = 'standard', atol = 1e-28, rtol = 1e-12)
+cf.bq <- unlist(cf.bq)
 
-sim.b <- affineSimulate(paramsList = par.bates.svj1, N.factors = 1, t.days = 21, t.freq = 1/78, freq.subdiv = 10, init.vals = list(S.array=0,V.array=matrix(1), day.offset=0), rng.seed = as.integer(Sys.time()), jumpGeneratorPtr = getPointerToGenerator('expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type = 'standard', nrepl = 2.5e3)
+sim.b <- affineSimulate(paramsList = par.bates.svj1, N.factors = 1, t.days = 21, t.freq = 1/78, freq.subdiv = 10, init.vals = list(S.array=0,V.array=matrix(1e-2), day.offset=0), rng.seed = as.integer(Sys.time()), jumpGeneratorPtr = getPointerToGenerator('expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type = 'standard', nrepl = 1e4)
+
+sim.bq <- affineSimulate(paramsList = list(P = NULL, Q = par.bates.svj1$Q), N.factors = 1, t.days = 21, t.freq = 1/78, freq.subdiv = 10, init.vals = list(S.array=0,V.array=matrix(1e-2), day.offset=0), rng.seed = as.integer(Sys.time()), jumpGeneratorPtr = getPointerToGenerator('expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform('expNormJumpTransform')$TF, mod.type = 'standard', nrepl = 1e4)
 
 sim.b <- lapply(sim.b$sim.arrays, function(x) x$S.array)
 sim.b <- do.call(cbind, sim.b)
@@ -56,6 +58,14 @@ sim.b <- tail(sim.b,1)
 m.test.b <- t.test(log(sim.b), mu=cf.b[2])
 
 v.test.b <- pchisq(q = (length(sim.b))*((1/length(sim.b) * sum((log(sim.b) - cf.b[2])^2))/(cf.b[3] - cf.b[2]^2)), df = length(sim.b))
+
+sim.bq <- lapply(sim.bq$sim.arrays, function(x) x$S.array)
+sim.bq <- do.call(cbind, sim.bq)
+sim.bq <- tail(sim.bq,1)
+
+m.test.bq <- t.test(log(sim.bq), mu=cf.bq[2])
+
+v.test.bq <- pchisq(q = (length(sim.bq))*((1/length(sim.bq) * sum((log(sim.bq) - cf.bq[2])^2))/(cf.bq[3] - cf.bq[2]^2)), df = length(sim.bq))
 
 #### ---- bates and Heston ----
 par.mix <- par.bates.svj1

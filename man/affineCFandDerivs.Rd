@@ -7,40 +7,49 @@
 \alias{affineCFderivsNumerical}
 \title{Characteristic function, moments, cumulant-generating function.}
 \usage{
-affineCF(u, params.Q, params.P = NULL, t.vec, v.0,
-  jumpTransform = getPointerToJumpTransform(fstr =
-  "expNormJumpTransform")$TF, N.factors = 3, CGF = FALSE,
-  mod.type = "standard", mkt = NULL, ...)
+affineCF(
+  u,
+  params.Q,
+  params.P = NULL,
+  t.vec,
+  v.0,
+  jumpTransform = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
+  N.factors = 3,
+  CGF = FALSE,
+  mod.type = "standard",
+  mkt = NULL,
+  ...
+)
 
-affineCFderivs(u, params.Q, params.P = NULL, t.vec, v.0,
+affineCFderivs(
+  u,
+  params.Q,
+  params.P = NULL,
+  t.vec,
+  v.0,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),
-  N.factors = 3, mod.type = "standard", mkt = NULL, ...)
+  N.factors = 3,
+  mod.type = "standard",
+  mkt = NULL,
+  ...
+)
 
-affineCFderivsNumerical(u, params.Q, params.P = NULL, t.vec, v.0,
-  N.factors = 3, hh = 1e-04,
+affineCFderivsNumerical(
+  u,
+  params.Q,
+  params.P = NULL,
+  t.vec,
+  v.0,
+  N.factors = 3,
+  hh = 1e-04,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform")$TF,
-  mod.type, mkt = NULL, ...)
+  mod.type,
+  mkt = NULL,
+  ...
+)
 }
 \arguments{
 \item{u}{\code{U x (N.factors+1)} matrix of points at which the CF and its derivative should be evaluated.}
-
-\item{params.Q}{Q measure (pricing) parameters. See \code{\link{jumpDiffusionODEs}}.}
-
-\item{params.P}{P measure (statistical) parameters, optional. See \code{\link{jumpDiffusionODEs}}.}
-
-\item{t.vec}{\code{T}-length numeric vector of maturities}
-
-\item{v.0}{\code{S x N.factors} matrix of volatility factor values}
-
-\item{jumpTransform}{string, name of function to evaluate the jumpTransform in the model}
-
-\item{N.factors}{number of stochastic volatility factors, 3 by default}
-
-\item{CGF}{return Cumulant-Generating Function or Characteristic/Moment Generating Function? CGF if \code{TRUE}. Log of CF if \code{u} is complex.}
-
-\item{mkt}{\code{data.frame} with fields \code{p=1} (deprecated), \code{r} (interest rate), \code{q} (dividend yield) and \code{t} maturity, same as \code{t.vec}, uf \code{NULL}, replaced with \code{r=0} and \code{q=0}}
-
-\item{...}{Further arguments passed to \code{\link{solveODE}}}
 
 \item{params.Q}{parameter lists, see \code{\link{jumpDiffusionODEs}}}
 
@@ -48,9 +57,17 @@ affineCFderivsNumerical(u, params.Q, params.P = NULL, t.vec, v.0,
 
 \item{t.vec}{numeric vector with maturities, see \code{mkt} below}
 
+\item{v.0}{\code{S x N.factors} matrix of volatility factor values}
+
 \item{jumpTransform}{XPtr to jump transform (in \code{affineCF}, \code{affineCFderivsNumerical}) or list of Xptrs (in \code{affineCFderivs}). Pointers are recovered with \code{\link{getPointerToJumpTransform}} or can be provided by the user if they're willing to sweat.}
 
 \item{N.factors}{integer, number of SV factors}
+
+\item{CGF}{return Cumulant-Generating Function or Characteristic/Moment Generating Function? CGF if \code{TRUE}. Log of CF if \code{u} is complex.}
+
+\item{mkt}{\code{data.frame} with fields \code{p=1} (deprecated), \code{r} (interest rate), \code{q} (dividend yield) and \code{t} maturity, same as \code{t.vec}, uf \code{NULL}, replaced with \code{r=0} and \code{q=0}}
+
+\item{...}{Further arguments passed to \code{\link{solveODE}}}
 }
 \value{
 \code{affineCF} evaluates the CF/CGF of an affine model under P or Q measures, at matrix \code{u} of size  \code{U x (N.factors+1)}, maturity vector \code{t.vec} of length \code{T}, and variance factor matrix of size \code{S x N.factors}. The result is a \code{U x T x S} matrix. \cr 

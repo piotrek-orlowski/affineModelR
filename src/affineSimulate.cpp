@@ -32,8 +32,8 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       int simWidth = 1;
       // mat sArray = mat(simLength+1, simWidth, fill::zeros);
       // mat vArray = mat(simLength+1,(BB/2)*simWidth, fill::zeros);
-      mat sArray = mat(retainIndex.size(), simWidth, fill::zeros);
-      mat vArray = mat(retainIndex.size(),(BB/2)*simWidth, fill::zeros);
+      mat sArray = mat(retainIndex.size()+1L, simWidth, fill::zeros);
+      mat vArray = mat(retainIndex.size()+1L,(BB/2)*simWidth, fill::zeros);
       vec jumpMarks = vec(retainIndex.size(), fill::zeros);
       vec jumpValues(1+BB/2,fill::zeros);
       
@@ -170,6 +170,12 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       }
       // exponentiate sArray
       sArray = exp(sArray);
+      
+      // remove last entry from sArray and vArray
+      //  they were added because of some strange explosions
+      sArray = sArray.head_rows(retainIndex.n_elem);
+      vArray = vArray.head_rows(retainIndex.n_elem);
+      
       List returnList = List::create(Named("S.array") = sArray, Named("V.array") = vArray, Named("num.jumps") = numJumps, Named("dt") = dt, Named("jump.times") = jumpMarks, Named("jump.sizes") = jumpSizes);
       
       return wrap(returnList);
