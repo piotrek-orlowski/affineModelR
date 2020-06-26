@@ -7,7 +7,7 @@
 #' @export
 #' @return Return a list with elements \code{terms.dt}, \code{terms.vdt}, \code{terms.vdW}, \code{terms.vdWort}, \code{vterms.dt}, \code{vterms.vdt}, \code{vterms.vdW}, \code{jmpPar}, \code{intensity.terms}. These are all elements for simulating the N-factor model.
 
-ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = getPointerToJumpTransform(fstr = 'expNormJumpTransform'), N.factors, rf.rate = 0.0,mod.type = "standard") {
+ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = getPointerToJumpTransform(fstr = 'expNormJumpTransform'), N.factors, rf.rate = 0.0) {
   
   ### if no params.P structure is given, the simulation is done under Q!
   doP <- !is.null(params.P)
@@ -99,40 +99,23 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   
   ## volatility part
   vterms.vdW <- vterms.dt <- vterms.vdt <- matrix(0,N.factors,N.factors)
-  if(mod.type == "standard"){
-    if(doP){
-      for(nn in 1:N.factors){
-        vterms.dt[nn,nn] <- params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta
-        vterms.vdt[nn,nn] <- - params.P[[as.character(nn)]]$kpp
-        # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
-        vterms.vdW[nn,nn] <- params.P[[as.character(nn)]]$lmb[1]^2
-      }
-    } else {
-      for(nn in 1:N.factors){
-        vterms.dt[nn,nn] <- params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta
-        vterms.vdt[nn,nn] <- - params.Q[[as.character(nn)]]$kpp
-        # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
-        vterms.vdW[nn,nn] <- params.Q[[as.character(nn)]]$lmb[1]^2
-      }
+  
+  if(doP){
+    for(nn in 1:N.factors){
+      vterms.dt[nn,nn] <- params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta
+      vterms.vdt[nn,nn] <- - params.P[[as.character(nn)]]$kpp
+      # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
+      vterms.vdW[nn,nn] <- params.P[[as.character(nn)]]$lmb[1]^2
     }
-  } else if(mod.type == "cascade.vol"){
-    if(doP){
-      for(nn in 1:N.factors){
-        vterms.dt[nn,nn] <- params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta
-        vterms.vdt[nn,nn] <- - params.P[[as.character(nn)]]$kpp
-        vterms.vdW[nn,nn] <- params.P[[as.character(nn)]]$lmb[1]^2
-      }
-      vterms.vdt[2:(2+length(params.P[["1"]]$lmb)-2),1] <- - (params.P[["1"]]$kpp - params.Q[["1"]]$kpp)/params.P[["1"]]$lmb[1] * params.P[["1"]]$lmb[-1]
-      vterms.vdW[1:length(params.P[["1"]]$lmb),1] <- params.P[["1"]]$lmb
-    } else {
-      for(nn in 1:N.factors){
-        vterms.dt[nn,nn] <- params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta
-        vterms.vdt[nn,nn] <- - params.Q[[as.character(nn)]]$kpp
-        vterms.vdW[nn,nn] <- params.Q[[as.character(nn)]]$lmb[1]^2
-      }
-      vterms.vdW[1:length(params.Q[["1"]]$lmb),1] <- params.Q[["1"]]$lmb
+  } else {
+    for(nn in 1:N.factors){
+      vterms.dt[nn,nn] <- params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta
+      vterms.vdt[nn,nn] <- - params.Q[[as.character(nn)]]$kpp
+      # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
+      vterms.vdW[nn,nn] <- params.Q[[as.character(nn)]]$lmb[1]^2
     }
   }
+ 
   
   #  intensity.terms <- c(params.P$jmp$lvec,params.P$jmp$lprop)
   
