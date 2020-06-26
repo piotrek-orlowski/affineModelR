@@ -49,14 +49,12 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   
   // initalize scalars corresponding to jump intensities
   NumericMatrix L1 = Rcpp::as<NumericMatrix>(D["l1"]);
-  Rcout << "Matrix L1 \n" << L1 << "\n";
   mat l1_only_vol = mat(L1.begin(), Nfactors, Njumps, false);
   mat l1(Nfactors+1, Njumps, fill::zeros);
+  // assign intensities to lower Nfactor rows (top is for stock)
   l1.rows(1,Nfactors) = l1_only_vol;
   
   
-  // mat l1 = as<mat>(L1);
-  l1.print("Matrix l1");
   
   NumericVector L0 = Rcpp::as<NumericVector>(D["l0"]);
   rowvec l0(L0.begin(), Njumps, false);
