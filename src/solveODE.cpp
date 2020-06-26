@@ -29,6 +29,9 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   // get the number of factors
   int Nfactors = Rcpp::as<int>(D["N.factors"]);
   
+  // get the number of jumps
+  int Njumps = Rcpp::as<int>(D["N.jumps"]);
+  
   // initialize complex matrices
   NumericVector h1r = Rcpp::as<NumericVector>(D["H1r"]);
   NumericVector h1i = Rcpp::as<NumericVector>(D["H1i"]);
@@ -45,30 +48,40 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   cx_vec K0 = Rcpp::as<arma::cx_vec>(D["K0"]);
   
   // initalize scalars corresponding to jump intensities
-  NumericVector L1 = Rcpp::as<NumericVector>(D["l1"]);
-  colvec l1 = vec(L1.begin(),Nfactors+1,false);
+  NumericMatrix L1 = Rcpp::as<NumericMatrix>(D["l1"]);
+  mat l1 = mat(L1.begin(), Nfactors+1, Njumps, false);
   
   NumericVector L0 = Rcpp::as<NumericVector>(D["l0"]);
-  colvec l0(L0.begin(),1,false);
+  rowvec l0(L0.begin(), Njumps, false);
   
   // now get jump parameters
   Rcpp::List jmpPar = D["jmpPar"];
 
   // pick jump transform
-  SEXP tmpPtr = D["jumpTransformPtr"];
-  Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
-  cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
+  Rcpp::List ptrList_ = D["jumpTransformPtr"];
+  std::vector<cmpFuncPtr> jumpTransformPointerVector(Njumps);
+  SEXP tmpPtr;
   
+  // initialize ODE dependent variable
   cx_colvec beta(y,Nfactors+1,false);
 
-  // calculate jump transform
-  complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
+  // calculate jump transforms
+  cx_vec jmpTr(Njumps);
+  for(int j = 0; j < Njumps; j++){
+    tmpPtr = ptrList_[j];
+    Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
+    cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
+    jmpTr(j) = jumpTrFoo(beta, jmpPar[j]); // check
+  }
+  // complex<double> jmpTr = jumpTrFoo(beta,jmpPar);
   
   cx_colvec yRes = trans(K1) * beta;
   
   for (int i=0;i<Nfactors+1;i++) {
     ydot[i] = yRes[i];
-    ydot[i] += l1(i) * jmpTr;
+    for(int j=0; j<Njumps;j++){
+      ydot[i] += l1(i,j) * jmpTr(j); 
+    }
   }
   
   // now add vol of vol
@@ -77,7 +90,10 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   }
   
   // now do the alpha
-  ydot[Nfactors+1] = (complex<double>) dot(K0,beta) + l0(0) * jmpTr;  
+  ydot[Nfactors+1] = (complex<double>) dot(K0,beta);  
+  for(int j=0; j<Njumps;j++){
+    ydot[Nfactors+1] += l0(j) * jmpTr(j); 
+  }
 }
 
 extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<double> *ydot, double *yout, int *ip){

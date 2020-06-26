@@ -31,7 +31,7 @@ jumpDiffusionODEs <- function(u,params,mkt,jumpTransform = getPointerToJumpTrans
 
   ode.structs <- ODEstructs(params,jumpTransform,mkt,N.factors)
 
-  solMat <- solveODE(u, mkt, ode.structs$K0, ode.structs$K1, ode.structs$l0, ode.structs$l1, ode.structs$H1, jmp = params$jmp,jumpTransform = jumpTransform, mf = mf, rtol=rtol, atol=atol, N.factors = N.factors)
+  solMat <- solveODE(u, mkt, ode.structs$K0, ode.structs$K1, ode.structs$l0, ode.structs$l1, ode.structs$H1, jmp = params[grepl("jmp", names(params))], jumpTransform = jumpTransform, mf = mf, rtol=rtol, atol=atol, N.factors = N.factors)
   return(solMat)
 }
 

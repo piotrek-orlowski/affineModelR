@@ -11,6 +11,7 @@
 #' 
 
 solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, mf = 22, rtol=1e-14, atol=1e-30, N.factors = 3) {  
+  
   # prepare structures where we save
   N <- nrow(u)
   TT <- dim(mkt$t)[1]
@@ -23,6 +24,8 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointer
   # load C parameter passing structures
   odeList <- list()
   odeList$N.factors <- N.factors
+  # be aware that jmp should be a list of jmp parameter lists
+  odeList$N.jumps <- length(jmp)
   odeList$H1r <- Re(as.vector(H1))
   odeList$H1i <- Im(as.vector(H1))
   odeList$K1r <- Re(K1)
@@ -32,7 +35,7 @@ solveODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, jumpTransform = getPointer
   odeList$l0 <- l0
   odeList$l1 <- l1
   odeList$jmpPar <- jmp
-  odeList$jumpTransformPtr <- jumpTransform
+  odeList$jumpTransformPtr <- lapply(jmp, function(jmp_par) jmp_par$jumpTransform$TF)
 
   # now solve for all frequencies
   for (uu in 1:nrow(u)) {
