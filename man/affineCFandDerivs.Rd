@@ -16,7 +16,6 @@ affineCF(
   jumpTransform = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
   N.factors = 3,
   CGF = FALSE,
-  mod.type = "standard",
   mkt = NULL,
   ...
 )
@@ -29,7 +28,6 @@ affineCFderivs(
   v.0,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),
   N.factors = 3,
-  mod.type = "standard",
   mkt = NULL,
   ...
 )
@@ -43,7 +41,6 @@ affineCFderivsNumerical(
   N.factors = 3,
   hh = 1e-04,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform")$TF,
-  mod.type,
   mkt = NULL,
   ...
 )

@@ -15,7 +15,6 @@ affineSimulate(
   rf.rate = 0,
   jumpGeneratorPtr = getPointerToGenerator(fstr = "expNormJumpTransform"),
   jumpTransformPtr = getPointerToJumpTransform(fstr = "expNormJumpTransform")$TF,
-  mod.type = "standard",
   specMaker = ODEstructsForSim,
   nrepl = 1,
   ...
@@ -38,7 +37,7 @@ affineSimulate(
 
 \item{rf.rate}{Assumed constant risk-free rate (annualized, continuously compounded)}
 
-\item{specMaker}{function that takes arguments \code{params.P}, \code{params.Q}, \code{jumpTransform}, \code{N.factors}, \code{rf.rate}, \code{mod.type} and potentially more via the ellipsis operator (\code{...}) and returns the DPS matrices. See documentation of \link{ODEstructs}.}
+\item{specMaker}{function that takes arguments \code{params.P}, \code{params.Q}, \code{jumpTransform}, \code{N.factors}, \code{rf.rate}, and potentially more via the ellipsis operator (\code{...}) and returns the DPS matrices. See documentation of \link{ODEstructs}.}
 
 \item{jumpTransform}{The function that calculates the jump Laplace transform}
 }

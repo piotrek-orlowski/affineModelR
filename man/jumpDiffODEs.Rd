@@ -14,8 +14,7 @@ jumpDiffusionODEs(
   rtol = 1e-12,
   atol = 1e-30,
   mf = 22,
-  N.factors = 3,
-  mod.type = "standard"
+  N.factors = 3
 )
 
 jumpDiffusionODEsP(
@@ -27,8 +26,7 @@ jumpDiffusionODEsP(
   rtol = 1e-13,
   atol = 1e-30,
   mf = 22,
-  N.factors = 3,
-  mod.type = "standard"
+  N.factors = 3
 )
 
 odeExtSolveWrap(
@@ -41,7 +39,6 @@ odeExtSolveWrap(
   mf = 12,
   N.factors = 3,
   jumpTransform = getPointerToJumpTransform("expNormJumpTransform"),
-  mod.type = "standard",
   ...
 )
 }
@@ -61,8 +58,6 @@ odeExtSolveWrap(
 \item{mf}{Integration method to use in the ODE solver functions, \code{\link[deSolve]{vode}} and \code{\link[deSolve]{zvode}}.}
 
 \item{N.factors}{The number of volatility factors, of which the first one can co-jump with the stock.}
-
-\item{mod.type}{string indicating whether the \code{'standard'} DPS (2000) specification should be used, or a variation as seen in Duffie, Pedersen and Singleton (2003), where the volatility of volatility of the first factor can be driven by other factors.}
 
 \item{params.P}{P (statistical measure) parameters, see Details.}
 

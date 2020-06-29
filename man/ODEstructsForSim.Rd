@@ -9,8 +9,7 @@ ODEstructsForSim(
   params.Q,
   jumpTransformPointer = getPointerToJumpTransform(fstr = "expNormJumpTransform"),
   N.factors,
-  rf.rate = 0,
-  mod.type = "standard"
+  rf.rate = 0
 )
 }
 \arguments{

@@ -4,7 +4,7 @@
 \alias{ODEstructs}
 \title{ODE specification structures}
 \usage{
-ODEstructs(params, jumpTransform, mkt, N.factors, mod.type = "standard")
+ODEstructs(params, jumpTransform = NULL, mkt, N.factors)
 }
 \arguments{
 \item{params}{A structure containing the volatility factor + jump descriptions.}
@@ -12,15 +12,10 @@ ODEstructs(params, jumpTransform, mkt, N.factors, mod.type = "standard")
 \item{jumpTransform}{String, the function that calculates the jump transform.}
 
 \item{N.factors}{The number of stochastic volatility factors (stock is not a factor).}
-
-\item{mod.type}{string. \code{"standard"} forces the basic DPS 'concrete example' parametrisation, \code{"cascade.vol"} allows for richer vol-of-vol structure}
 }
 \value{
 Return a list with elements K0, l0, K1, l1, H1, see DPS (2000) for their meaning
 }
 \description{
 This function translates the parameters lists (see \code{jumpDiffusionODEs}) to model specification matrices and vectors for ODE solution. Expand this function if you want to add other specifications.
-}
-\details{
-using \code{mod.type = "cascade.vol"} allows that the vol of vol of the first factor is an affine function of other factors. The constraint is that this factor can't have a leverage effect (i.e. its rho parameter must be 0), otherwise you're not in the affine setting.
 }
