@@ -72,7 +72,7 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   qJmpCompensator <- sapply(seq_along(jumpTrPtr)
                             , function(jmp_index){
                               evaluateTransform(genPtr_ = jumpTrPtr[[jmp_index]]
-                                                , beta = beta = c(1,rep(0,N.factors))
+                                                , beta = c(1,rep(0,N.factors))
                                                 , params.Q[[sprintf("jmp%d", jj)]])
                             })
   
@@ -171,5 +171,14 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
   
   #  intensity.terms <- c(params.P$jmp$lvec,params.P$jmp$lprop)
   
-  return(list(terms.dt = terms.dt, terms.vdt = terms.vdt, terms.vdW = terms.vdW, terms.vdWort = terms.vdWort, vterms.dt = vterms.dt, vterms.vdt = vterms.vdt, vterms.vdW = vterms.vdW, jmpPar = jmpPar, intensity.terms = terms.intensity))
+  return(list(terms.dt = terms.dt
+              , terms.vdt = terms.vdt
+              , terms.vdW = terms.vdW
+              , terms.vdWort = terms.vdWort
+              , vterms.dt = vterms.dt
+              , vterms.vdt = vterms.vdt
+              , vterms.vdW = vterms.vdW
+              , jmpPar = jmpPar
+              , intensity.terms = terms.intensity
+              , numJmpTransforms = N.jumps))
 }
