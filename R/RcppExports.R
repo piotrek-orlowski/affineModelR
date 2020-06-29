@@ -116,3 +116,8 @@ evaluateTransform <- function(genPtr_, beta, jmpPar) {
     .Call('_affineModelR_evaluateTransform', PACKAGE = 'affineModelR', genPtr_, beta, jmpPar)
 }
 
+#'@export
+evaluateTransformDerivative <- function(genPtr_, beta, jmpPar) {
+    .Call('_affineModelR_evaluateTransformDerivative', PACKAGE = 'affineModelR', genPtr_, beta, jmpPar)
+}
+
