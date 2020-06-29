@@ -156,7 +156,7 @@ odeExtSolveWrap <- function(u, params.Q, params.P = NULL, mkt, rtol = 1e-12, ato
     params.P <- params.Q
   }
 
-  solMat <- solveExtendedODE(u, mkt, ode.structs.P$K0, ode.structs.P$K1, ode.structs.P$l0, ode.structs.P$l1, ode.structs.P$H1, jmp = params.P$jmp, mf = mf, rtol=rtol, atol=atol, N.factors=N.factors, jumpTransform = jumpTransform, ...)
+  solMat <- solveExtendedODE(u, mkt, ode.structs.P$K0, ode.structs.P$K1, ode.structs.P$l0, ode.structs.P$l1, ode.structs.P$H1, jmp = params.P[grepl("jmp", names(params.P))], mf = mf, rtol=rtol, atol=atol, N.factors=N.factors, jumpTransform = jumpTransform, ...)
 
   return(solMat)
 }

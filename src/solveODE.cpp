@@ -6,6 +6,8 @@
 #include "../inst/include/expm1c.h"
 #include "../inst/include/jumpTransform.h"
 
+#include <typeinfo>
+
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
@@ -54,17 +56,14 @@ extern "C" void derivs2 (int *neq, double *t, complex<double> *y, complex<double
   // assign intensities to lower Nfactor rows (top is for stock)
   l1.rows(1,Nfactors) = l1_only_vol;
   
-  
-  
   NumericVector L0 = Rcpp::as<NumericVector>(D["l0"]);
   rowvec l0(L0.begin(), Njumps, false);
   
   // now get jump parameters
   Rcpp::List jmpPar = D["jmpPar"];
 
-  // pick jump transform
+  // pick jump transforms
   Rcpp::List ptrList_ = D["jumpTransformPtr"];
-  std::vector<cmpFuncPtr> jumpTransformPointerVector(Njumps);
   SEXP tmpPtr;
   
   // initialize ODE dependent variable
@@ -108,6 +107,9 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   // get the number of factors
   int Nfactors = Rcpp::as<int>(D["N.factors"]);
   
+  // get the number of jumps
+  int Njumps = Rcpp::as<int>(D["N.jumps"]);
+  
   // initialize complex matrices
   NumericVector h1r = Rcpp::as<NumericVector>(D["H1r"]);
   NumericVector h1i = Rcpp::as<NumericVector>(D["H1i"]);
@@ -124,35 +126,43 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   cx_vec K0 = Rcpp::as<arma::cx_vec>(D["K0"]);
   
   // initalize scalars corresponding to jump intensities
-  NumericVector L1 = Rcpp::as<NumericVector>(D["l1"]);
-  colvec l1 = vec(L1.begin(),Nfactors+1,false);
+  NumericMatrix L1 = Rcpp::as<NumericMatrix>(D["l1"]);
+  mat l1_only_vol = mat(L1.begin(), Nfactors, Njumps, false);
+  mat l1(Nfactors+1, Njumps, fill::zeros);
+  // assign intensities to lower Nfactor rows (top is for stock)
+  l1.rows(1,Nfactors) = l1_only_vol;
   
   NumericVector L0 = Rcpp::as<NumericVector>(D["l0"]);
-  colvec l0(L0.begin(),1,false);
+  rowvec l0(L0.begin(), Njumps, false);
   
   // now get jump parameters
   Rcpp::List jmpPar = D["jmpPar"];
   
-  // pick jump transform
-  Rcpp::List tmpPointers = D["jumpTransformPtr"];
-  SEXP tmpPtr = tmpPointers["TF"];
-  Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
-  cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
   
-  // pick jump transform derivative
-  tmpPtr = tmpPointers["D1"];
-  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD1Foo_(tmpPtr);
-  cmpFuncPtrMat jumpTrD1Foo = *jumpTrD1Foo_;
+  // pick jump transforms
+  Rcpp::List ptrList_ = D["jumpTransformPtr"];
+  Rcpp::List D1PtrList_ = D["jumpTransformD1Ptr"];
+  Rcpp::List D2PtrList_ = D["jumpTransformD2Ptr"];
+  Rcpp::List D3PtrList_ = D["jumpTransformD3Ptr"];
   
-  // pick jump transform second derivative
-  tmpPtr = tmpPointers["D2"];
-  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD2Foo_(tmpPtr);
-  cmpFuncPtrMat jumpTrD2Foo = *jumpTrD2Foo_;
-  
-  // pick jump transform third derivative
-  tmpPtr = tmpPointers["D3"];
-  Rcpp::XPtr<cmpFuncPtrMat> jumpTrD3Foo_(tmpPtr);
-  cmpFuncPtrMat jumpTrD3Foo = *jumpTrD3Foo_;
+  // SEXP tmpPtr = tmpPointers["TF"];
+  // Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
+  // cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
+  // 
+  // // pick jump transform derivative
+  // tmpPtr = tmpPointers["D1"];
+  // Rcpp::XPtr<cmpFuncPtrMat> jumpTrD1Foo_(tmpPtr);
+  // cmpFuncPtrMat jumpTrD1Foo = *jumpTrD1Foo_;
+  // 
+  // // pick jump transform second derivative
+  // tmpPtr = tmpPointers["D2"];
+  // Rcpp::XPtr<cmpFuncPtrMat> jumpTrD2Foo_(tmpPtr);
+  // cmpFuncPtrMat jumpTrD2Foo = *jumpTrD2Foo_;
+  // 
+  // // pick jump transform third derivative
+  // tmpPtr = tmpPointers["D3"];
+  // Rcpp::XPtr<cmpFuncPtrMat> jumpTrD3Foo_(tmpPtr);
+  // cmpFuncPtrMat jumpTrD3Foo = *jumpTrD3Foo_;
 
   // layout of y vector: 5 entries per derivative, total (2+N.factors)*4
   // let kk denote the derivative order
@@ -174,22 +184,65 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   betaTplPrime = yArma.subvec(3*(2+Nfactors),3*(2+Nfactors)+Nfactors);
   
   // calculate jump transform
-  complex<double> jmpTr;
-  jmpTr = jumpTrFoo(beta,jmpPar);
+  SEXP tmpPtr;
+  cx_vec jmpTr(Njumps);
+  for(int j = 0; j < Njumps; j++){
+    tmpPtr = ptrList_[j];
+    Rcpp::XPtr<cmpFuncPtr> jumpTrFoo_(tmpPtr);
+    cmpFuncPtr jumpTrFoo = *jumpTrFoo_;
+    jmpTr(j) = jumpTrFoo(beta, jmpPar[j]); // check
+  }
   
-  // three jump transform derivatives
-  cx_mat jmpTrD1 = jumpTrD1Foo(beta,jmpPar);
+  // first jump transform derivative
+  cx_mat jmpTrD1(Njumps, Nfactors + 1);
+  
+  for(int j = 0; j < Njumps; j++){
+    tmpPtr = D1PtrList_[j];
+    Rcpp::XPtr<cmpFuncPtrMat> jumpTrD1Foo_(tmpPtr);
+    cmpFuncPtrMat jumpTrD1Foo = *jumpTrD1Foo_;
+    jmpTrD1.row(j) = jumpTrD1Foo(beta, jmpPar[j]);
+  }
+  // the result is a vector of size Njumps x 1
   cx_mat jmpTrD1Tot = jmpTrD1 * betaPrime;
   
-  cx_mat jmpTrD2 = jumpTrD2Foo(beta,jmpPar);
-  cx_mat jmpTrD2Tot = jmpTrD1 * betaDblPrime + betaPrime.st() * jmpTrD2 * betaPrime;
+  // second jump transform derivative (Hessian of dim Nf+1 x Nf+1) x Njumps (cube)
+  cx_cube jmpTrD2(Nfactors + 1, Nfactors + 1, Njumps);
+  cx_mat jmpTrD2Tot(Njumps, 1);
   
-  cx_mat jmpTrD3 = jumpTrD3Foo(beta,jmpPar);
+  for(int j = 0; j < Njumps; j++){
+    tmpPtr = D2PtrList_[j];
+    Rcpp::XPtr<cmpFuncPtrMat> jumpTrD2Foo_(tmpPtr);
+    cmpFuncPtrMat jumpTrD2Foo = *jumpTrD2Foo_;
+    jmpTrD2.slice(j) = jumpTrD2Foo(beta, jmpPar[j]);
+    
+    jmpTrD2Tot.row(j) = jmpTrD1.row(j) * betaDblPrime + betaPrime.st() * jmpTrD2.slice(j) * betaPrime;
+  }
   
-  cx_mat unvecH = jmpTrD3 * betaPrime;
-  unvecH.reshape((1+Nfactors),(1+Nfactors));
+  // cx_mat jmpTrD2 = jumpTrD2Foo(beta,jmpPar);
+  // cx_mat jmpTrD2Tot = jmpTrD1 * betaDblPrime + betaPrime.st() * jmpTrD2 * betaPrime;
   
-  cx_mat jmpTrD3Tot = jmpTrD1 * betaTplPrime + 3.0 * betaPrime.st() * jmpTrD2 * betaDblPrime + betaPrime.st() * unvecH * betaPrime;
+  // Third jump transform derivative (gradient of vectorized Hessian) (Nf+1)^2 x (Nf+1) x Njumps (cube)
+  cx_cube jmpTrD3(pow(Nfactors + 1, 2), Nfactors + 1, Njumps);
+  cx_mat jmpTrD3Tot(Njumps, 1);
+  
+  for(int j = 0; j < Njumps; j++){
+    tmpPtr = D3PtrList_[j];
+    Rcpp::XPtr<cmpFuncPtrMat> jumpTrD3Foo_(tmpPtr);
+    cmpFuncPtrMat jumpTrD3Foo = *jumpTrD3Foo_;
+    jmpTrD3.slice(j) = jumpTrD3Foo(beta, jmpPar[j]);
+    
+    cx_mat unvecH = jmpTrD3.slice(j) * betaPrime;
+    unvecH.reshape((1+Nfactors),(1+Nfactors));
+    
+    jmpTrD3Tot.row(j) = jmpTrD1.row(j) * betaTplPrime + 3.0 * betaPrime.st() * jmpTrD2.slice(j) * betaDblPrime + betaPrime.st() * unvecH * betaPrime;
+  }
+  
+  // cx_mat jmpTrD3 = jumpTrD3Foo(beta,jmpPar);
+  // 
+  // cx_mat unvecH = jmpTrD3 * betaPrime;
+  // unvecH.reshape((1+Nfactors),(1+Nfactors));
+  // 
+  // cx_mat jmpTrD3Tot = jmpTrD1 * betaTplPrime + 3.0 * betaPrime.st() * jmpTrD2 * betaDblPrime + betaPrime.st() * unvecH * betaPrime;
   
   // main ODE: vol driver
   cx_colvec yRes(Nfactors+2);
@@ -198,11 +251,16 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   // main ODE: vol-of-vol and jumps
   for (int i=0;i<Nfactors+1;i++) {
     yRes(i) +=  0.5 * ((complex<double>) as_scalar(dot(strans(beta) * H1.slice(i),beta)));
-    yRes(i) += l1(i) * jmpTr;
+    for(int j=0;j<Njumps;j++){
+      yRes(i) += l1(i,j) * jmpTr(j); 
+    }
   }
   
   // main ODE: alpha
-  yRes(Nfactors+1) = (complex<double>) dot(K0,beta) + l0(0) * jmpTr;
+  yRes(Nfactors+1) = (complex<double>) dot(K0,beta);
+  for(int j=0;j<Njumps;j++){
+    yRes(Nfactors+1) += l0(j) * jmpTr(j); 
+  }
   
   // first deriv ODE
   cx_colvec yResPrime(Nfactors+2);
@@ -211,12 +269,17 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   // first deriv ODE: vol-of-vol and jumps
   for (int i=0;i<Nfactors+1;i++) {
     yResPrime(i) +=  ((complex<double>) as_scalar(dot(strans(betaPrime) * H1.slice(i),beta)));
-    yResPrime(i) += l1(i) * jmpTrD1Tot(0);
+    for(int j=0;j<Njumps;j++){
+      yResPrime(i) += l1(i,j) * jmpTrD1Tot(j); 
+    }
   }
   
   // first Deriv: alpha
   yResPrime(Nfactors+1) = (complex<double>) as_scalar(dot(K0, betaPrime));
-  yResPrime(Nfactors+1) += l0(0) * jmpTrD1Tot(0);
+  // yResPrime(Nfactors+1) += l0(0) * jmpTrD1Tot(0);
+  for(int j=0;j<Njumps;j++){
+    yResPrime(Nfactors+1) += l0(j) * jmpTrD1Tot(j); 
+  }
   
   // second deriv ODE
   cx_colvec yResDblPrime(Nfactors+2);
@@ -226,12 +289,16 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   for (int i=0;i<Nfactors+1;i++) {
     yResDblPrime(i) +=  ((complex<double>) as_scalar(dot(strans(betaDblPrime) * H1.slice(i),beta)));
     yResDblPrime(i) +=  ((complex<double>) as_scalar(dot(strans(betaPrime) * H1.slice(i),betaPrime)));
-    yResDblPrime(i) += l1(i) * jmpTrD2Tot(0);
+    for(int j=0;j<Njumps;j++){
+      yResDblPrime(i) += l1(i,j) * jmpTrD2Tot(j); 
+    }
   }
   
   // second Deriv: alpha
   yResDblPrime(Nfactors+1) = (complex<double>) as_scalar(dot(K0, betaDblPrime));
-  yResDblPrime(Nfactors+1) += l0(0) * jmpTrD2Tot(0);
+  for(int j=0;j<Njumps;j++){
+    yResDblPrime(Nfactors+1) += l0(j) * jmpTrD2Tot(j); 
+  }
   
   // third deriv ODE
   cx_colvec yResTplPrime(Nfactors+2);
@@ -240,12 +307,16 @@ extern "C" void derivsExt (int *neq, double *t, complex<double> *y, complex<doub
   for (int i=0;i<Nfactors+1;i++) {
     yResTplPrime(i) +=  ((complex<double>) as_scalar(dot(strans(betaTplPrime) * H1.slice(i),beta)));
     yResTplPrime(i) +=  3.0*((complex<double>) as_scalar(dot(strans(betaDblPrime) * H1.slice(i),betaPrime)));
-    yResTplPrime(i) += l1(i) * jmpTrD3Tot(0);
+    for(int j=0;j<Njumps;j++){
+      yResTplPrime(i) += l1(i,j) * jmpTrD3Tot(j); 
+    }
   }
   
   // third Deriv: alpha
   yResTplPrime(Nfactors+1) = (complex<double>) as_scalar(dot(K0, betaTplPrime));
-  yResTplPrime(Nfactors+1) += l0(0) * jmpTrD3Tot(0);
+  for(int j=0;j<Njumps;j++){
+    yResTplPrime(Nfactors+1) += l0(j) * jmpTrD3Tot(j); 
+  }
   
   for(int kk=0; kk < Nfactors+2; kk++){
     ydot[kk] = yRes(kk);

@@ -32,12 +32,19 @@ solveExtendedODE <- function(u, mkt, K0, K1, l0, l1, H1, jmp, mf = 22, rtol=1e-1
   odeList$K0 <- K0
   odeList$l0 <- l0
   odeList$l1 <- l1
+  # odeList$muYc <- jmp$muYc # seems not necessary
+  # odeList$sigmaYc <- jmp$sigmaYc # seems not necessary
+  # odeList$muSc <- jmp$muSc # seems not necessary
+  # odeList$rhoc <- jmp$rhoc # seems not necessary
+  # odeList$jumpTransformPtr <- jumpTransform
+  
+  # be aware that jmp should be a list of jmp parameter lists
+  odeList$N.jumps <- length(jmp)
   odeList$jmpPar <- jmp
-  odeList$muYc <- jmp$muYc # seems not necessary
-  odeList$sigmaYc <- jmp$sigmaYc # seems not necessary
-  odeList$muSc <- jmp$muSc # seems not necessary
-  odeList$rhoc <- jmp$rhoc # seems not necessary
-  odeList$jumpTransformPtr <- jumpTransform
+  odeList$jumpTransformPtr <- lapply(jmp, function(jmp_par) jmp_par$jumpTransform$TF)
+  odeList$jumpTransformD1Ptr <- lapply(jmp, function(jmp_par) jmp_par$jumpTransform$D1)
+  odeList$jumpTransformD2Ptr <- lapply(jmp, function(jmp_par) jmp_par$jumpTransform$D2)
+  odeList$jumpTransformD3Ptr <- lapply(jmp, function(jmp_par) jmp_par$jumpTransform$D3)
   
   # now solve for all frequencies
   for (uu in 1:nrow(u)) {
