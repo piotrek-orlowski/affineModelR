@@ -14,7 +14,17 @@
 #' @return A list containing the simulated stock & volatility paths + stock price jump times + a time index
 #' 
 
-affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78, freq.subdiv = 24, rng.seed = 42, init.vals = NULL, rf.rate = 0, jumpGeneratorPtr = getPointerToGenerator(fstr = 'expNormJumpTransform'), jumpTransformPtr = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, specMaker = ODEstructsForSim, nrepl = 1, ...){
+affineSimulate <- function(paramsList
+                           , N.factors = 3
+                           , t.days = 1
+                           , t.freq = 1/78
+                           , freq.subdiv = 24
+                           , rng.seed = 42
+                           , init.vals = NULL
+                           , rf.rate = 0
+                           , jumpGeneratorPtr = getPointerToGenerator(fstr = 'expNormJumpTransform')
+                           , jumpTransformPtr = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF
+                           , specMaker = ODEstructsForSim, nrepl = 1, ...){
   
   # Set random seed
   set.seed(rng.seed)
@@ -28,7 +38,13 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
   paramsListCpp <- specMaker(paramsList$P, paramsList$Q, jumpTransformPtr, N.factors, rf.rate, ...)
   
   # Obtain pointer to jump generator: you can provide your own c++ jump generating function
-  jmpPtr = jumpGeneratorPtr
+  if(!is.null(jumpGeneratorPtr)){
+    jmpPtr <- list(jumpGeneratorPtr)
+  } else {
+    jmpPtr <- paramsList$Q[grepl("jmp", names(paramsList$Q))]
+    jmpPtr <- lapply(jmpPtr, function(jmp_temp) jmp_temp$jumpGenerator)
+  }
+  
   
   # Set up time grid & random numbers for the BMs
   #   time.grid <- simulator2fMakeTimeGrid(t.days,t.freq,freq.subdiv,N.factors)
@@ -54,7 +70,16 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
-        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = paramsList$P, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, rtol = 1e-6, atol = 1e-12)
+        cf <- affineCF(u = der.mat
+                       , params.Q = paramsList$Q
+                       , params.P = paramsList$P
+                       , t.vec = 20
+                       , v.0 = matrix(1,nrow=1,ncol=N.factors)
+                       , jumpTransform = jumpTransformPtr
+                       , N.factors = N.factors
+                       , CGF = FALSE
+                       , rtol = 1e-6
+                       , atol = 1e-12)
         cf <- drop(cf)
         cf.mom <- Re(1e4*diff(cf))
         init.vals.cpp$V.array[nn] <- cf.mom
@@ -63,7 +88,16 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
-        cf <- affineCF(u = der.mat, params.Q = paramsList$Q, params.P = NULL, t.vec = 20, v.0 = matrix(1,nrow=1,ncol=N.factors), jumpTransform = jumpTransformPtr, N.factors = N.factors, CGF = F, rtol = 1e-6, atol = 1e-12)
+        cf <- affineCF(u = der.mat
+                       , params.Q = paramsList$Q
+                       , params.P = NULL
+                       , t.vec = 20
+                       , v.0 = matrix(1,nrow=1,ncol=N.factors)
+                       , jumpTransform = jumpTransformPtr
+                       , N.factors = N.factors
+                       , CGF = FALSE
+                       , rtol = 1e-6
+                       , atol = 1e-12)
         cf <- drop(cf)
         cf.mom <- Re(1e4*diff(cf))
         init.vals.cpp$V.array[nn] <- cf.mom
@@ -102,7 +136,7 @@ affineSimulate <- function(paramsList, N.factors = 3, t.days = 1, t.freq = 1/78,
     loc.jumpTimes <- loc.jumpTimes
     
     loc.jumpSizes <- simArraysList[[kk]]$jump.sizes
-    loc.jumpSizes <- loc.jumpSizes[,which(simArraysList[[kk]]$jump.times!=0), drop=FALSE]
+    loc.jumpSizes <- loc.jumpSizes[,which(rowSums(simArraysList[[kk]]$jump.times)!=0), drop=FALSE]
   
     
     loc.jumpDF <- as.data.frame(cbind(loc.jumpTimes, t(loc.jumpSizes)))

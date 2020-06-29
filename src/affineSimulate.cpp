@@ -13,10 +13,6 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       // Access the random number generator state
       RNGScope scope;
       
-      // Get the jump generator pointer
-      XPtr<funcPtr> genPtr(genPtr_);
-      funcPtr genFoo = *genPtr;
-      
       // convert dt_ to double
       double dt = as<double>(dt_);
       
@@ -34,8 +30,8 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       // mat vArray = mat(simLength+1,(BB/2)*simWidth, fill::zeros);
       mat sArray = mat(retainIndex.size()+1L, simWidth, fill::zeros);
       mat vArray = mat(retainIndex.size()+1L,(BB/2)*simWidth, fill::zeros);
-      vec jumpMarks = vec(retainIndex.size(), fill::zeros);
-      vec jumpValues(1+BB/2,fill::zeros);
+      mat jumpMarks = mat(retainIndex.size()+1L, 1+(BB/2)*simWidth, fill::zeros);
+      // vec jumpValues(1+BB/2,fill::zeros);
       
       // mat sArrayTemp = mat(1, simWidth, fill::zeros);
       // mat vArrayTemp = mat(1, (BB/2.0)*simWidth, fill::zeros);
@@ -61,11 +57,14 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       colvec stockVdtTerms = as<colvec>(parList["terms.vdt"]);
       colvec stockVdWTerms = as<colvec>(parList["terms.vdW"]);
       colvec stockVdWortTerms = as<colvec>(parList["terms.vdWort"]);
-      colvec intensity = as<colvec>(parList["intensity.terms"]);
+      mat intensity = as<mat>(parList["intensity.terms"]);
       
       mat volDtTerms = as<mat>(parList["vterms.dt"]);
       mat volVdtTerms = as<mat>(parList["vterms.vdt"]);
       mat volVdWTerms = as<mat>(parList["vterms.vdW"]);
+      
+      // Save number of jumps
+      int numJmpTransforms = parList["numJmpTransforms"];
       
       //// Set up state and stock propagation in first-order Euler scheme.
       // initialise holders for past variables and increments
@@ -76,23 +75,18 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       vPrevInt.rows(1,BB/2) = vPrev;
       colvec dLogS = colvec(sPrev.n_rows);
       colvec dv = colvec(vPrev.n_rows);
-      colvec instIntensity = colvec(1,fill::zeros);
+      colvec instIntensity = colvec(numJmpTransforms,fill::zeros);
       colvec oneVec = colvec(BB/2,fill::ones);
       colvec vNew = colvec(BB/2);
       
       // Generate vector for jump checks
-      // NumericVector jumpCheckRcpp = runif(TT,0,1);
-      // colvec jumpCheck(jumpCheckRcpp);
-      // colvec jmpPar = as<colvec>(parList["jmpPar"]);
-      colvec jump = genFoo(parList["jmpPar"]);
-      int jmpLength = jump.n_elem;
-      
-      double jmpProb = 0.0;
+      // colvec jump = genFoo(parList["jmpPar"]);
+      int jmpLength = 1 + vPrev.n_elem;
       
       // Count jumps
-      int numJumps = 0;
+      vec numJumps(jmpLength, arma::fill::zeros);
       double cumdt = 0;
-      arma::mat jumpSizes(jmpLength,retainIndex.size(),arma::fill::zeros);
+      arma::mat jumpSizes(jmpLength, retainIndex.size(), arma::fill::zeros);
       
       // Count iterations so that you know when to retain
       int iterationCounter = 1L;
@@ -113,7 +107,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         // vPrev = vArray.row(ii-1).t();
         // vPrev = vArrayTemp.row(0).t();
         vPrevInt.rows(1,BB/2) = vPrev;
-        // current jump intensity
+        // current jump intensity (vector of intensities for all jump types)
         instIntensity = intensity.t() * vPrevInt;
         //// stock increment without jumps
         // constant terms
@@ -134,18 +128,42 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         dv += pow(volVdWTerms.t() * vPrev,0.5) % bmGrid.submat(0,0,0,BB/2-1).t();
         
         // Is there a jump? Generate, if yes
-        jmpProb = 1.0 - exp(-instIntensity(0) * dt);
-        vec jumpCheck(1,arma::fill::randu);
-        if(jumpCheck(0) < jmpProb){
-          numJumps++;
-          jumpMarks(iterationCounter) = cumdt;
-          jump = genFoo(parList["jmpPar"]);
-          jumpSizes.col(iterationCounter) += jump;
-          
-          dLogS += jump(0);
-          
-          dv.subvec(0,jmpLength-2) += jump.subvec(1,jmpLength-1);
+        // Check for each factor, jmpProb is a vector wth numJmpTransforms entries
+        vec jmpProb = 1.0 - arma::exp(-instIntensity * dt);
+        vec jumpCheck(jmpProb.n_elem, arma::fill::randu);
+        
+        for(int j = 0; j < numJmpTransforms; j++){
+          double jumpCheckLoc = jumpCheck(j);
+          // Get the jump generator pointer
+          Rcpp::List ptrList_ = genPtr_;
+          SEXP genPtrLoc = ptrList_[j];
+          XPtr<funcPtr> genPtr(genPtrLoc);
+          funcPtr genFoo = *genPtr;
+          Rcpp::List jmpParLoc = parList["jmpPar"];
+          if(jumpCheckLoc < jmpProb(j)){
+            numJumps(j)++;
+            jumpMarks(iterationCounter, j) = cumdt;
+            colvec jump = genFoo(jmpParLoc[j]);
+            
+            jumpSizes.col(iterationCounter) = jump;
+            
+            int locNumJumps = jump.n_elem;
+            dLogS += jump(0);
+            if(locNumJumps > 1){
+              dv.subvec(0,locNumJumps-2) += jump.subvec(1,locNumJumps-1);
+            }
+          }
         }
+        // if(jumpCheck(0) < jmpProb){
+        //   numJumps++;
+        //   jumpMarks(iterationCounter) = cumdt;
+        //   jump = genFoo(parList["jmpPar"]);
+        //   jumpSizes.col(iterationCounter) += jump;
+        //   
+        //   dLogS += jump(0);
+        //   
+        //   dv.subvec(0,jmpLength-2) += jump.subvec(1,jmpLength-1);
+        // }
         // add increment to previous value, store
         sPrev = sPrev + dLogS;
         
