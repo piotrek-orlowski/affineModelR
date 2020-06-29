@@ -92,7 +92,7 @@ jumpDiffusionODEsP <- function(u,params.P,params.Q,mkt,jumpTransform = getPointe
 
   
 
-  solMat <- solveODE(u, mkt, ode.structs.P$K0, ode.structs.P$K1, ode.structs.P$l0, ode.structs.P$l1, ode.structs.P$H1, jmp = params.P$jmp, jumpTransform = jumpTransform, mf = mf, rtol=rtol, atol=atol, N.factors=N.factors)
+  solMat <- solveODE(u, mkt, ode.structs.P$K0, ode.structs.P$K1, ode.structs.P$l0, ode.structs.P$l1, ode.structs.P$H1, jmp = params.P[grepl("jmp", names(params.P))], jumpTransform = jumpTransform, mf = mf, rtol=rtol, atol=atol, N.factors=N.factors)
   return(solMat)
 }
 
