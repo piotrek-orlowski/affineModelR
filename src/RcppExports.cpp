@@ -71,6 +71,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// generate_expStockRetJump
+arma::vec generate_expStockRetJump(Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_generate_expStockRetJump(SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(generate_expStockRetJump(jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// generate_bgl2019Jump
+arma::vec generate_bgl2019Jump(Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_generate_bgl2019Jump(SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(generate_bgl2019Jump(jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // generate_JT2010_cojump
 arma::vec generate_JT2010_cojump(Rcpp::List jmpPar);
 RcppExport SEXP _affineModelR_generate_JT2010_cojump(SEXP jmpParSEXP) {
@@ -200,6 +222,102 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// expStockRetTransform
+std::complex<double> expStockRetTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_expStockRetTransform(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(expStockRetTransform(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// expStockRetTransformD1
+arma::cx_mat expStockRetTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_expStockRetTransformD1(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(expStockRetTransformD1(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// expStockRetTransformD2
+arma::cx_mat expStockRetTransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_expStockRetTransformD2(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(expStockRetTransformD2(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// expStockRetTransformD3
+arma::cx_mat expStockRetTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_expStockRetTransformD3(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(expStockRetTransformD3(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bgl2019Transform
+std::complex<double> bgl2019Transform(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_bgl2019Transform(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(bgl2019Transform(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bgl2019TransformD1
+arma::cx_mat bgl2019TransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_bgl2019TransformD1(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(bgl2019TransformD1(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bgl2019TransformD2
+arma::cx_mat bgl2019TransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_bgl2019TransformD2(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(bgl2019TransformD2(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bgl2019TransformD3
+arma::cx_mat bgl2019TransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_bgl2019TransformD3(SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(bgl2019TransformD3(beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // jt2010_transform_CJ
 std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar);
 RcppExport SEXP _affineModelR_jt2010_transform_CJ(SEXP betaSEXP, SEXP jmpParSEXP) {
@@ -307,6 +425,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// evaluateTransformDerivative
+arma::cx_mat evaluateTransformDerivative(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar);
+RcppExport SEXP _affineModelR_evaluateTransformDerivative(SEXP genPtr_SEXP, SEXP betaSEXP, SEXP jmpParSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type genPtr_(genPtr_SEXP);
+    Rcpp::traits::input_parameter< const arma::cx_colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List >::type jmpPar(jmpParSEXP);
+    rcpp_result_gen = Rcpp::wrap(evaluateTransformDerivative(genPtr_, beta, jmpPar));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_affineModelR_affineCFevalCpp", (DL_FUNC) &_affineModelR_affineCFevalCpp, 3},
@@ -314,6 +445,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_affineModelR_affineSimulateCpp", (DL_FUNC) &_affineModelR_affineSimulateCpp, 7},
     {"_affineModelR_generate_expNormJump", (DL_FUNC) &_affineModelR_generate_expNormJump, 1},
     {"_affineModelR_generate_kouExpJump", (DL_FUNC) &_affineModelR_generate_kouExpJump, 1},
+    {"_affineModelR_generate_expStockRetJump", (DL_FUNC) &_affineModelR_generate_expStockRetJump, 1},
+    {"_affineModelR_generate_bgl2019Jump", (DL_FUNC) &_affineModelR_generate_bgl2019Jump, 1},
     {"_affineModelR_generate_JT2010_cojump", (DL_FUNC) &_affineModelR_generate_JT2010_cojump, 1},
     {"_affineModelR_generate_JT2010_cojump_voljump", (DL_FUNC) &_affineModelR_generate_JT2010_cojump_voljump, 1},
     {"_affineModelR_generate_1sidedExp", (DL_FUNC) &_affineModelR_generate_1sidedExp, 1},
@@ -325,6 +458,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_affineModelR_kouExpTransformD1", (DL_FUNC) &_affineModelR_kouExpTransformD1, 2},
     {"_affineModelR_kouExpTransformD2", (DL_FUNC) &_affineModelR_kouExpTransformD2, 2},
     {"_affineModelR_kouExpTransformD3", (DL_FUNC) &_affineModelR_kouExpTransformD3, 2},
+    {"_affineModelR_expStockRetTransform", (DL_FUNC) &_affineModelR_expStockRetTransform, 2},
+    {"_affineModelR_expStockRetTransformD1", (DL_FUNC) &_affineModelR_expStockRetTransformD1, 2},
+    {"_affineModelR_expStockRetTransformD2", (DL_FUNC) &_affineModelR_expStockRetTransformD2, 2},
+    {"_affineModelR_expStockRetTransformD3", (DL_FUNC) &_affineModelR_expStockRetTransformD3, 2},
+    {"_affineModelR_bgl2019Transform", (DL_FUNC) &_affineModelR_bgl2019Transform, 2},
+    {"_affineModelR_bgl2019TransformD1", (DL_FUNC) &_affineModelR_bgl2019TransformD1, 2},
+    {"_affineModelR_bgl2019TransformD2", (DL_FUNC) &_affineModelR_bgl2019TransformD2, 2},
+    {"_affineModelR_bgl2019TransformD3", (DL_FUNC) &_affineModelR_bgl2019TransformD3, 2},
     {"_affineModelR_jt2010_transform_CJ", (DL_FUNC) &_affineModelR_jt2010_transform_CJ, 2},
     {"_affineModelR_jt2010_transform_CJ_VJ", (DL_FUNC) &_affineModelR_jt2010_transform_CJ_VJ, 2},
     {"_affineModelR_jumpTransform_1sidedExp", (DL_FUNC) &_affineModelR_jumpTransform_1sidedExp, 2},
@@ -334,6 +475,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_affineModelR_getPointerToJumpTransform", (DL_FUNC) &_affineModelR_getPointerToJumpTransform, 1},
     {"_affineModelR_evaluateGenerator", (DL_FUNC) &_affineModelR_evaluateGenerator, 2},
     {"_affineModelR_evaluateTransform", (DL_FUNC) &_affineModelR_evaluateTransform, 3},
+    {"_affineModelR_evaluateTransformDerivative", (DL_FUNC) &_affineModelR_evaluateTransformDerivative, 3},
     {NULL, NULL, 0}
 };
 

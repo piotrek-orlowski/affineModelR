@@ -39,14 +39,14 @@ arma::cx_mat jumpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar;
     int mDim = beta.size();
-    arma::cx_mat jtJacobian(1,mDim,arma::fill::zeros);
+    arma::cx_mat jacobian(1,mDim,arma::fill::zeros);
     
     // deriv wrt beta(0)
     tmpVar = (1.0 + expm1c(muYc * beta(0) + 0.5 * pow(sigmaYc * beta(0),2)));
     tmpVar *= (muSc * rhoc - muYc*(beta(0)*muSc*rhoc+beta(1)*muSc-1.0) - beta(0)*pow(sigmaYc,2)*(beta(0)*muSc*rhoc+beta(1)*muSc-1.0));
     tmpVar /= pow(beta(0)*muSc*rhoc+beta(1)*muSc-1.0,2);
     
-    jtJacobian(0,0) = tmpVar;
+    jacobian(0,0) = tmpVar;
     
     tmpVar = 0;
     
@@ -54,11 +54,11 @@ arma::cx_mat jumpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar
     tmpVar = muSc * (1.0 + expm1c(muYc * beta(0) + 0.5 * pow(sigmaYc * beta(0),2)));
     tmpVar /= pow(beta(0)*muSc*rhoc+beta(1)*muSc-1.0,2);
     
-    jtJacobian(0,1) = tmpVar;
+    jacobian(0,1) = tmpVar;
     
     // All subsequent derivatives are 0
     
-    return(jtJacobian);
+    return(jacobian);
     
   } catch( std::exception& __ex__) {
     forward_exception_to_r(__ex__);
@@ -219,7 +219,7 @@ arma::cx_mat kouExpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpP
     // assumption is that only the underlying and the first volatility factor can jumps
     complex<double> tmpVar1, tmpVar2, tmpVar3;
     int mDim = beta.size();
-    arma::cx_mat jtJacobian(1,mDim,arma::fill::zeros);
+    arma::cx_mat jacobian(1,mDim,arma::fill::zeros);
     
     // deriv wrt beta(0)
     tmpVar1 = -muSc * rhoc * exp(beta(0)*muYc);
@@ -229,7 +229,7 @@ arma::cx_mat kouExpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpP
     tmpVar3 = muSc * muYc * exp(beta(0) * muYc);
     tmpVar3 /= pow((pow(sigmaYc*beta(0),2.0) - complex<double>(1,0)),1.0)*(beta(1)-muSc + beta(0)*rhoc);
     
-    jtJacobian(0,0) = tmpVar1 + tmpVar2 + tmpVar3;
+    jacobian(0,0) = tmpVar1 + tmpVar2 + tmpVar3;
     
     tmpVar1 = 0;
     tmpVar2 = 0;
@@ -238,11 +238,11 @@ arma::cx_mat kouExpTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpP
     tmpVar1 = - muSc * exp(muYc * beta(0));
     tmpVar1 /= (pow(beta(0)*sigmaYc,2.0) - complex<double>(1,0))*pow(beta(1) - muSc + beta(0)*rhoc,2.0);
     
-    jtJacobian(0,1) = tmpVar1;
+    jacobian(0,1) = tmpVar1;
     
     // All subsequent derivatives are 0
     
-    return(jtJacobian);
+    return(jacobian);
     
   } catch( std::exception& __ex__) {
     forward_exception_to_r(__ex__);
@@ -375,6 +375,356 @@ arma::cx_mat kouExpTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpP
   return 0;
 }
 
+// [[Rcpp::export]]
+std::complex<double> expStockRetTransform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    
+    // Only the stock return (first element) jumps
+    complex<double> cf = pow(muYc, -1.0) / (pow(muYc, -1.0) - beta(0));
+    cf = cf - complex<double>(1.0,0.0);
+    
+    return(cf);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat expStockRetTransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    
+    // assumption is that only the underlying and the first volatility factor can jumps
+    complex<double> tmpVar;
+    int mDim = beta.size();
+    arma::cx_mat jacobian(1,mDim,arma::fill::zeros);
+    
+    // deriv wrt beta(0)
+    tmpVar = pow(muYc, -1.0) / pow(pow(muYc, -1.0) - beta(0), 2.0);
+    
+    jacobian(0,0) = tmpVar;
+    
+    // All subsequent derivatives are 0
+    
+    return(jacobian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat expStockRetTransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    
+    int mDim = beta.size();
+    arma::cx_mat hessian(mDim,mDim,arma::fill::zeros);
+    
+    // Only the stock return (first element) jumps
+    complex<double> cf = 2.0 * pow(muYc, -1.0) / pow((pow(muYc, -1.0) - beta(0)), 3.0);
+    cf = cf;
+    
+    hessian(0,0) = cf;
+    
+    return(hessian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat expStockRetTransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muYc = Rcpp::as<double>(jmpPar["muYc"]);
+    
+    int mDim = beta.size();
+    arma::cx_mat deriv_vec_hessian(mDim * mDim,mDim,arma::fill::zeros);
+    
+    // Only the stock return (first element) jumps
+    complex<double> cf = 6.0 * pow(muYc, -1.0) / pow((pow(muYc, -1.0) - beta(0)), 4.0);
+    cf = cf;
+    
+    deriv_vec_hessian(0,0) = cf;
+    
+    return(deriv_vec_hessian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+std::complex<double> bgl2019Transform(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muY = Rcpp::as<double>(jmpPar["muY"]);
+    double muV = Rcpp::as<double>(jmpPar["muV"]);
+    
+    bool yPresent = (muY != 0.0);
+    bool vPresent = (muV != 0.0);
+    
+    complex<double> cf, cfY, cfV;
+    
+    if(yPresent){
+      cfY = pow(muY, -1.0) / (pow(muY, -1.0) - beta(0));
+    } else {
+      cfY = 1.0;
+    }
+    
+    if(vPresent){
+      cfV = pow(muV, -1.0) / (pow(muV, -1.0) - beta(1));
+    } else {
+      cfV = 1.0;
+    }
+    
+    cf = cfY * cfV - complex<double>(1.0,0.0);
+    
+    return(cf);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat bgl2019TransformD1(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    
+    double muY = Rcpp::as<double>(jmpPar["muY"]);
+    double muYinv = 1.0/muY;
+    double muV = Rcpp::as<double>(jmpPar["muV"]);
+    double muVinv = 1.0/muV;
+    
+    bool yPresent = (muY != 0.0);
+    bool vPresent = (muV != 0.0);
+    
+    // assumption is that only the underlying and the first volatility factor can jumps
+    complex<double> tmpVar, tmpVarV, tmpVarY;
+    int mDim = beta.size();
+    arma::cx_mat jacobian(1,mDim,arma::fill::zeros);
+    
+    // evaluate numerators
+    if(vPresent){
+      tmpVarV = 1.0 / (muVinv - beta(1));
+    } else {
+      muVinv = 1.0;
+      tmpVarV = complex<double>(1.0,0.0);
+    }
+    
+    if(yPresent){
+      tmpVarY = 1.0 / (muYinv - beta(0));
+    } else {
+      muYinv = 1.0;
+      tmpVarY = complex<double>(1.0,0.0);
+    }
+    
+    // deriv wrt beta(0)
+    if(yPresent){
+      tmpVar = muYinv * pow(tmpVarY,2.0) * muVinv * pow(tmpVarV, 1.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    
+    jacobian(0,0) = tmpVar;
+    
+    // deriv wrt beta(1)
+    if(vPresent){
+      tmpVar = muYinv * pow(tmpVarY,1.0) * muVinv * pow(tmpVarV, 2.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    jacobian(0,1) = tmpVar;
+    
+    // All subsequent derivatives are 0
+    
+    return(jacobian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat bgl2019TransformD2(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    
+    double muY = Rcpp::as<double>(jmpPar["muY"]);
+    double muYinv = 1.0/muY;
+    double muV = Rcpp::as<double>(jmpPar["muV"]);
+    double muVinv = 1.0/muV;
+    
+    bool yPresent = (muY != 0.0);
+    bool vPresent = (muV != 0.0);
+    
+    // assumption is that only the underlying and the first volatility factor can jumps
+    complex<double> tmpVar, tmpVarV, tmpVarY;
+    int mDim = beta.size();
+    arma::cx_mat hessian(mDim,mDim,arma::fill::zeros);
+    
+    // evaluate numerators
+    if(vPresent){
+      tmpVarV = 1.0 / (muVinv - beta(1));
+    } else {
+      muVinv = 1.0;
+      tmpVarV = complex<double>(1.0,0.0);
+    }
+    
+    if(yPresent){
+      tmpVarY = 1.0 / (muYinv - beta(0));
+    } else {
+      muYinv = 1.0;
+      tmpVarY = complex<double>(1.0,0.0);
+    }
+    
+    // 2nd deriv wrt beta(0)
+    if(yPresent){
+      tmpVar = 2.0 * muYinv * pow(tmpVarY,3.0) * muVinv * pow(tmpVarV, 1.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    
+    hessian(0,0) = tmpVar;
+    
+    // 2nd deriv wrt beta(1)
+    if(vPresent){
+      tmpVar = 2.0 * muYinv * pow(tmpVarY,1.0) * muVinv * pow(tmpVarV, 3.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    hessian(1,1) = tmpVar;
+    
+    // cross-derivative
+    if(vPresent){
+      tmpVar = muYinv * pow(tmpVarY,2.0) * muVinv * pow(tmpVarV, 2.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    hessian(0,1) = tmpVar;
+    hessian(1,0) = tmpVar;
+    
+    // All subsequent derivatives are 0
+    
+    return(hessian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+arma::cx_mat bgl2019TransformD3(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    
+    double muY = Rcpp::as<double>(jmpPar["muY"]);
+    double muYinv = 1.0/muY;
+    double muV = Rcpp::as<double>(jmpPar["muV"]);
+    double muVinv = 1.0/muV;
+    
+    bool yPresent = (muY != 0.0);
+    bool vPresent = (muV != 0.0);
+    
+    // assumption is that only the underlying and the first volatility factor can jumps
+    complex<double> tmpVar, tmpVarV, tmpVarY;
+    int mDim = beta.size();
+    arma::cx_mat deriv_vec_hessian(mDim * mDim,mDim,arma::fill::zeros);
+    
+    // evaluate numerators
+    if(vPresent){
+      tmpVarV = 1.0 / (muVinv - beta(1));
+    } else {
+      muVinv = 1.0;
+      tmpVarV = complex<double>(1.0,0.0);
+    }
+    
+    if(yPresent){
+      tmpVarY = 1.0 / (muYinv - beta(0));
+    } else {
+      muYinv = 1.0;
+      tmpVarY = complex<double>(1.0,0.0);
+    }
+    
+    // triple deriv wrt beta(0)
+    if(yPresent){
+      tmpVar = 6.0 * muYinv * pow(tmpVarY,4.0) * muVinv * pow(tmpVarV, 1.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    deriv_vec_hessian(0,0) = tmpVar;
+    
+    // triple deriv wrt beta(1)
+    if(vPresent){
+      tmpVar = 6.0 * muYinv * pow(tmpVarY,1.0) * muVinv * pow(tmpVarV, 4.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    deriv_vec_hessian(mDim+2-1,1) = tmpVar;
+    
+    // twice beta(0), once beta(1)
+    if(vPresent){
+      tmpVar = 2.0 * muYinv * pow(tmpVarY,3.0) * muVinv * pow(tmpVarV, 2.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    deriv_vec_hessian(1,0) = tmpVar;
+    deriv_vec_hessian(mDim,0) = tmpVar;
+    deriv_vec_hessian(0,1) = tmpVar;
+    
+    // twice beta(1), once beta(0)
+    if(vPresent){
+      tmpVar = 2.0 * muYinv * pow(tmpVarY,2.0) * muVinv * pow(tmpVarV, 3.0);  
+    } else {
+      tmpVar = complex<double>(0.0,0.0);
+    } 
+    
+    deriv_vec_hessian(mDim+1,0) = tmpVar;
+    deriv_vec_hessian(1,1) = tmpVar;
+    deriv_vec_hessian(mDim,1) = tmpVar;
+    
+    // All subsequent derivatives are 0
+    
+    return(deriv_vec_hessian);
+    
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
 // Jacod and Todorov (2010): doubly uniform jumps, co-jump only
 // [[Rcpp::export]]
 std::complex<double> jt2010_transform_CJ(const arma::cx_colvec beta, const Rcpp::List jmpPar){
@@ -484,61 +834,61 @@ std::complex<double> jt2010_transform_CJ_VJ(const arma::cx_colvec beta, const Rc
   return cf;
 }
 
-// // [[Rcpp::export]]
-// std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar){
-//   try{
-//     double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price jumps
-//     double muInt = Rcpp::as<double>(jmpPar["muInt"]); // exponential parameter for intensity jump
-//     double muVol2 = Rcpp::as<double>(jmpPar["muVol2"]); // exponential parameter for intensity jump / 2nd vol jump
-//     double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
-//     double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
-//     double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
-//     
-//     // jump in the underlying and the first volatility factor 
-//     complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
-//     
-//     complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
-//     cf *= 1.0/(complex<double>(1,0) - c);
-//     cf -= complex<double>(1,0);
-//     
-//     // jump in the intensity factor and other volatility factor
-//     cf += gammaProp * (1.0 / (1.0 - beta(2) * muInt) / (1.0 - beta(3) * muVol2) - 1.0);
-//     
-//     return(cf);
-//     
-//   } catch( std::exception& __ex__) {
-//     forward_exception_to_r(__ex__);
-//   } catch(...) {
-//     ::Rf_error( "c++ exception (unknown reason)" );
-//   }
-//   return 0;
-// }
-// 
-// // [[Rcpp::export]]
-// std::complex<double> jumpTransform_1sidedExp_2(const arma::cx_colvec beta, const Rcpp::List jmpPar){
-//   try{
-//     double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price co-jumps
-//     double muStock2 = Rcpp::as<double>(jmpPar["muStock2"]); // exponential parameter for individual jump in asset price
-//     double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
-//     double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
-//     double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
-//     
-//     // jump in the underlying and the first volatility factor 
-//     complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
-//     
-//     complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
-//     cf *= 1.0/(complex<double>(1,0) - c);
-//     cf -= complex<double>(1,0);
-//     
-//     // jump in the intensity factor and other volatility factor
-//     cf += gammaProp * (1.0 / (1.0 + beta(0) * muStock2) - complex<double>(1.0,0));
-//     
-//     return(cf);
-//     
-//   } catch( std::exception& __ex__) {
-//     forward_exception_to_r(__ex__);
-//   } catch(...) {
-//     ::Rf_error( "c++ exception (unknown reason)" );
-//   }
-//   return 0;
-// } 
+// [[Rcpp::export]]
+std::complex<double> jumpTransform_1sidedExp(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price jumps
+    double muInt = Rcpp::as<double>(jmpPar["muInt"]); // exponential parameter for intensity jump
+    double muVol2 = Rcpp::as<double>(jmpPar["muVol2"]); // exponential parameter for intensity jump / 2nd vol jump
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
+    double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
+    double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
+
+    // jump in the underlying and the first volatility factor
+    complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
+
+    complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
+    cf *= 1.0/(complex<double>(1,0) - c);
+    cf -= complex<double>(1,0);
+
+    // jump in the intensity factor and other volatility factor
+    cf += gammaProp * (1.0 / (1.0 - beta(2) * muInt) / (1.0 - beta(3) * muVol2) - 1.0);
+
+    return(cf);
+
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}
+
+// [[Rcpp::export]]
+std::complex<double> jumpTransform_1sidedExp_2(const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  try{
+    double muStock = Rcpp::as<double>(jmpPar["muStock"]); // exponential parameter for negative asset price co-jumps
+    double muStock2 = Rcpp::as<double>(jmpPar["muStock2"]); // exponential parameter for individual jump in asset price
+    double rhoc = Rcpp::as<double>(jmpPar["rhoc"]); // 'correlation' parameter for first vol and stock jump
+    double muVol = Rcpp::as<double>(jmpPar["muVol"]); // exponential parameter for first volatility jump
+    double gammaProp = Rcpp::as<double>(jmpPar["gammaProp"]); // proportionality parameter for balancing jump types against each other
+
+    // jump in the underlying and the first volatility factor
+    complex<double> c = muVol * beta(1) + rhoc * muVol * beta(0);
+
+    complex<double> cf = 1.0 / (1.0 + beta(0) * muStock);
+    cf *= 1.0/(complex<double>(1,0) - c);
+    cf -= complex<double>(1,0);
+
+    // jump in the intensity factor and other volatility factor
+    cf += gammaProp * (1.0 / (1.0 + beta(0) * muStock2) - complex<double>(1.0,0));
+
+    return(cf);
+
+  } catch( std::exception& __ex__) {
+    forward_exception_to_r(__ex__);
+  } catch(...) {
+    ::Rf_error( "c++ exception (unknown reason)" );
+  }
+  return 0;
+}

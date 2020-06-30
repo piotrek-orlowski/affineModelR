@@ -13,4 +13,8 @@ arma::vec generate_JT2010_cojump_voljump(Rcpp::List jmpPar);
 
 arma::vec generate_1sidedExp(Rcpp::List jmpPar);
 
+arma::vec generate_expStockRetJump(Rcpp::List jmpPar);
+
+arma::vec generate_bgl2019Jump(Rcpp::List jmpPar);
+
 #endif

@@ -1,5 +1,8 @@
+// [[Rcpp::depends(BH)]]
+
 #include "RcppArmadillo.h"
 #include "../inst/include/expm1c.h"
+#include <boost/math/special_functions/sign.hpp>
 
 using namespace std;
 using namespace Rcpp;
@@ -67,6 +70,67 @@ arma::vec generate_kouExpJump(Rcpp::List jmpPar){
   tmpRnd(0) += res(1) * volJumpCorr(0);
    
   res(0) = tmpRnd(0);
+  
+  return(res);
+}
+
+//' @export
+// [[Rcpp::export]]
+arma::vec generate_expStockRetJump(Rcpp::List jmpPar){
+  
+  // jumps in underlying only (just in case, set a jump of zero in first vol)
+  arma::vec res(2,arma::fill::zeros);
+  
+  // jump parameters
+  double stockPar = Rcpp::as<double>(jmpPar["muYc"]);
+  int stockParSign = boost::math::sign(stockPar);
+  double stockJump = abs(1.0/stockPar);
+  
+  arma::vec tmpRnd = rexp(1, stockJump) * stockParSign; 
+  
+  res(0) = tmpRnd(0);
+  
+  return(res);
+}
+
+//' @export
+// [[Rcpp::export]]
+arma::vec generate_bgl2019Jump(Rcpp::List jmpPar){
+  
+  // jumps in underlying only (just in case, set a jump of zero in first vol)
+  arma::vec res(2,arma::fill::zeros);
+  
+  // jump parameters
+  double muY = Rcpp::as<double>(jmpPar["muY"]);
+  double muYinv = 1.0/muY;
+  double muV = Rcpp::as<double>(jmpPar["muV"]);
+  double muVinv = 1.0/muV;
+  
+  bool yPresent = (muY != 0.0);
+  bool vPresent = (muV != 0.0);
+  
+  int stockParSign = boost::math::sign(muY);
+  int volParSign = boost::math::sign(muV);
+  
+  muY = stockParSign * muY;
+  muV = volParSign * muV;
+  
+  arma::vec tmpRnd(1);
+  tmpRnd.zeros();
+  
+  if(yPresent){
+    tmpRnd = rexp(1, 1.0 / muY) * stockParSign; 
+  }
+  
+  res(0) = tmpRnd(0);
+  
+  tmpRnd.zeros();
+  
+  if(vPresent){
+    tmpRnd = rexp(1, 1.0 / muV) * volParSign; 
+  }
+  
+  res(1) = tmpRnd(0);
   
   return(res);
 }
@@ -148,3 +212,4 @@ arma::vec generate_1sidedExp(Rcpp::List jmpPar){
   
   return(res);
 }
+

@@ -30,7 +30,6 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       // mat vArray = mat(simLength+1,(BB/2)*simWidth, fill::zeros);
       mat sArray = mat(retainIndex.size()+1L, simWidth, fill::zeros);
       mat vArray = mat(retainIndex.size()+1L,(BB/2)*simWidth, fill::zeros);
-      mat jumpMarks = mat(retainIndex.size()+1L, 1+(BB/2)*simWidth, fill::zeros);
       // vec jumpValues(1+BB/2,fill::zeros);
       
       // mat sArrayTemp = mat(1, simWidth, fill::zeros);
@@ -65,6 +64,8 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       
       // Save number of jumps
       int numJmpTransforms = parList["numJmpTransforms"];
+      // Save jump times
+      mat jumpMarks = mat(retainIndex.size()+1L, 1+(BB/2)*simWidth, fill::zeros);
       
       //// Set up state and stock propagation in first-order Euler scheme.
       // initialise holders for past variables and increments
@@ -81,12 +82,12 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
       
       // Generate vector for jump checks
       // colvec jump = genFoo(parList["jmpPar"]);
-      int jmpLength = 1 + vPrev.n_elem;
+      int jumpSize = vPrevInt.n_elem;
       
       // Count jumps
-      vec numJumps(jmpLength, arma::fill::zeros);
+      vec numJumps(jumpSize, arma::fill::zeros);
       double cumdt = 0;
-      arma::mat jumpSizes(jmpLength, retainIndex.size(), arma::fill::zeros);
+      arma::mat jumpSizes(jumpSize, retainIndex.size(), arma::fill::zeros);
       
       // Count iterations so that you know when to retain
       int iterationCounter = 1L;
@@ -100,7 +101,7 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         // generate random normals
         mat bmGrid = mat(1,BB,fill::randn);
         bmGrid *= dtSqrt;
-        
+      
         // set previous values
         // sPrev = sArray.row(ii-1).t();
         // sPrev = sArrayTemp.row(0).t();
@@ -108,11 +109,13 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         // vPrev = vArrayTemp.row(0).t();
         vPrevInt.rows(1,BB/2) = vPrev;
         // current jump intensity (vector of intensities for all jump types)
+      
         instIntensity = intensity.t() * vPrevInt;
         //// stock increment without jumps
         // constant terms
         dLogS = stockDtTerms;
         // terms multiplying vols that enter the drift
+      
         dLogS += vPrev.t() * stockVdtTerms;
         // multiply by dt
         dLogS = dLogS * dt;
@@ -126,12 +129,12 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
         dv = volDtTerms.t() * oneVec * dt;
         dv += volVdtTerms.t() * vPrev * dt;
         dv += pow(volVdWTerms.t() * vPrev,0.5) % bmGrid.submat(0,0,0,BB/2-1).t();
-        
+      
         // Is there a jump? Generate, if yes
         // Check for each factor, jmpProb is a vector wth numJmpTransforms entries
         vec jmpProb = 1.0 - arma::exp(-instIntensity * dt);
         vec jumpCheck(jmpProb.n_elem, arma::fill::randu);
-        
+      
         for(int j = 0; j < numJmpTransforms; j++){
           double jumpCheckLoc = jumpCheck(j);
           // Get the jump generator pointer
@@ -140,20 +143,27 @@ List affineSimulateCpp(SEXP TT_, SEXP BB_, SEXP parList_, SEXP dt_, SEXP initVal
           XPtr<funcPtr> genPtr(genPtrLoc);
           funcPtr genFoo = *genPtr;
           Rcpp::List jmpParLoc = parList["jmpPar"];
+      
           if(jumpCheckLoc < jmpProb(j)){
-            numJumps(j)++;
-            jumpMarks(iterationCounter, j) = cumdt;
+        
             colvec jump = genFoo(jmpParLoc[j]);
-            
-            jumpSizes.col(iterationCounter) = jump;
-            
+            arma::uvec nonZeroJumps = arma::find(jump != 0.0);
+      
+            numJumps(nonZeroJumps) = numJumps(nonZeroJumps) + arma::vec(arma::size(nonZeroJumps), arma::fill::ones);
+      
+            jumpMarks(iterationCounter * (arma::uvec(1,arma::fill::ones)), nonZeroJumps) = cumdt * arma::rowvec(arma::size(nonZeroJumps.t()), arma::fill::ones);
+          
             int locNumJumps = jump.n_elem;
+            jumpSizes.col(iterationCounter).rows(0,locNumJumps-1) = jump;
+            
             dLogS += jump(0);
             if(locNumJumps > 1){
+            
               dv.subvec(0,locNumJumps-2) += jump.subvec(1,locNumJumps-1);
             }
           }
         }
+        
         // if(jumpCheck(0) < jmpProb){
         //   numJumps++;
         //   jumpMarks(iterationCounter) = cumdt;

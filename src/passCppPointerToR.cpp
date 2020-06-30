@@ -16,7 +16,9 @@ SEXP getPointerToGenerator(std::string fstr) {
   else if (fstr == "jacodTodorovCoJumpsVolJumps")
     return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_JT2010_cojump_voljump))));
   else if (fstr == "oneSidedExponential")
-    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_1sidedExp))));
+    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_expStockRetJump))));
+  else if (fstr == "bgl2019")
+    return(Rcpp::wrap(Rcpp::XPtr<funcPtr>(new funcPtr(&generate_bgl2019Jump))));
   else
     return Rcpp::wrap(Rcpp::XPtr<funcPtr>(R_NilValue)); // runtime error as NULL no XPtr
 }
@@ -57,12 +59,18 @@ SEXP getPointerToJumpTransform(std::string fstr) {
   }
   else if(fstr == "oneSidedExponential"){
     pointers = Rcpp::List::create(
-      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform_1sidedExp))
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&expStockRetTransform)),
+      Rcpp::Named("D1") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&expStockRetTransformD1)),
+      Rcpp::Named("D2") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&expStockRetTransformD2)),
+      Rcpp::Named("D3") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&expStockRetTransformD3))
     );
     return(pointers);
-  } else if(fstr == "oneSidedExponential_2"){
+  } else if(fstr == "bgl2019") {
     pointers = Rcpp::List::create(
-      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&jumpTransform_1sidedExp_2))
+      Rcpp::Named("TF") = Rcpp::XPtr<cmpFuncPtr>(new cmpFuncPtr(&bgl2019Transform)),
+      Rcpp::Named("D1") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&bgl2019TransformD1)),
+      Rcpp::Named("D2") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&bgl2019TransformD2)),
+      Rcpp::Named("D3") = Rcpp::XPtr<cmpFuncPtrMat>(new cmpFuncPtrMat(&bgl2019TransformD3))
     );
     return(pointers);
   } else {
@@ -91,7 +99,15 @@ std::complex<double> evaluateTransform(SEXP genPtr_, const arma::cx_colvec beta,
   return(tfVal);
 }
 
-
+//'@export
+//[[Rcpp::export]]
+arma::cx_mat evaluateTransformDerivative(SEXP genPtr_, const arma::cx_colvec beta, const Rcpp::List jmpPar){
+  // Get the jump generator pointer
+  Rcpp::XPtr<cmpFuncPtrMat> genPtr(genPtr_);
+  cmpFuncPtrMat genFoo = *genPtr;
+  arma::cx_mat tfVal = genFoo(beta,jmpPar);
+  return(tfVal);
+}
 // //'@export
 // //[[Rcpp::export]]
 // arma::cx_mat evaluateTransformDerivative(SEXP genPtr_, const arma::cx_colvec& beta, const Rcpp::List& jmpPar){
