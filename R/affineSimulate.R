@@ -70,11 +70,14 @@ affineSimulate <- function(paramsList
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
+        v.0 <- matrix(sapply(paramsList$P[!grepl("jmp", names(paramsList$P))]
+                             , function(vol_par) vol_par$eta),nrow=1,ncol=N.factors)
+        v.0[which(is.na(v.0))] <- v.0[which(is.na(v.0))+1]
         cf <- affineCF(u = der.mat
                        , params.Q = paramsList$Q
                        , params.P = paramsList$P
                        , t.vec = 20
-                       , v.0 = matrix(1,nrow=1,ncol=N.factors)
+                       , v.0 = v.0
                        , jumpTransform = jumpTransformPtr
                        , N.factors = N.factors
                        , CGF = FALSE
@@ -88,11 +91,14 @@ affineSimulate <- function(paramsList
       for(nn in 1:N.factors){
         der.mat <- matrix(0,nrow=2,ncol = N.factors+1)
         der.mat[2,nn+1] <- 1e-4
+        v.0 <- matrix(sapply(paramsList$Q[!grepl("jmp", names(paramsList$Q))]
+                             , function(vol_par) vol_par$eta),nrow=1,ncol=N.factors)
+        v.0[which(is.na(v.0))] <- v.0[which(is.na(v.0))+1]
         cf <- affineCF(u = der.mat
                        , params.Q = paramsList$Q
                        , params.P = NULL
                        , t.vec = 20
-                       , v.0 = matrix(1,nrow=1,ncol=N.factors)
+                       , v.0 = v.0
                        , jumpTransform = jumpTransformPtr
                        , N.factors = N.factors
                        , CGF = FALSE
@@ -132,8 +138,9 @@ affineSimulate <- function(paramsList
     
     
     loc.jumpTimes <- simArraysList[[kk]]$jump.times*252 # given in DAYS
-    loc.jumpTimes <- loc.jumpTimes[which(loc.jumpTimes!=0)]
+    loc.jumpTimes <- loc.jumpTimes[which(rowSums(loc.jumpTimes)!=0),,drop=FALSE]
     loc.jumpTimes <- loc.jumpTimes
+    loc.jumpTimes <- apply(loc.jumpTimes,1,function(x) unique(x[x!=0]))
     
     loc.jumpSizes <- simArraysList[[kk]]$jump.sizes
     loc.jumpSizes <- loc.jumpSizes[,which(rowSums(simArraysList[[kk]]$jump.times)!=0), drop=FALSE]

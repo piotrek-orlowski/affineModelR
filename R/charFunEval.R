@@ -20,7 +20,16 @@
 #' @return \code{affineCF} evaluates the CF/CGF of an affine model under P or Q measures, at matrix \code{u} of size  \code{U x (N.factors+1)}, maturity vector \code{t.vec} of length \code{T}, and variance factor matrix of size \code{S x N.factors}. The result is a \code{U x T x S} matrix. \cr 
 #' \code{affineCFderivs} evaluates derivatives of the characteristic function with respect to its first argument via ODE solutions of an extended system. A list of length 4 is returned, each holding an \code{U x T x S} matrix. This is useful for calculating moments of log-returns.
 
-affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF, N.factors = 3, CGF= FALSE, mkt = NULL, ...){
+affineCF <- function(u
+                     , params.Q
+                     , params.P = NULL
+                     , t.vec
+                     , v.0
+                     , jumpTransform = getPointerToJumpTransform(fstr = 'expNormJumpTransform')$TF
+                     , N.factors = 3
+                     , CGF= FALSE
+                     , mkt = NULL
+                     , ...){
   
   # define mkt
   if(is.null(mkt)){
@@ -59,7 +68,15 @@ affineCF <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = g
 #' @export affineCFderivs
 #' @rdname affineCFandDerivs
 
-affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransform = getPointerToJumpTransform('expNormJumpTransform'), N.factors = 3, mkt = NULL, ...){
+affineCFderivs <- function(u
+                           , params.Q
+                           , params.P = NULL
+                           , t.vec
+                           , v.0
+                           , jumpTransform = getPointerToJumpTransform('expNormJumpTransform')
+                           , N.factors = 3
+                           , mkt = NULL
+                           , ...){
   
   # define mkt
   if(is.null(mkt)){
@@ -69,7 +86,13 @@ affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransfo
   }
   
   # solve ODEs
-  ode.sol <- odeExtSolveWrap(u = u, params.Q = params.Q, params.P = params.P, mkt = mkt, N.factors = N.factors, jumpTransform = jumpTransform, ...)
+  ode.sol <- odeExtSolveWrap(u = u
+                             , params.Q = params.Q
+                             , params.P = params.P
+                             , mkt = mkt
+                             , N.factors = N.factors
+                             , jumpTransform = jumpTransform
+                             , ...)
  
   ode.sol.cf <- ode.sol[,,c(paste0("b",1:N.factors),"a"),drop=FALSE]
   
@@ -135,7 +158,15 @@ affineCFderivs <- function(u, params.Q, params.P = NULL, t.vec, v.0, jumpTransfo
 #' @export affineCFderivsNumerical
 #' @rdname affineCFandDerivs
 
-affineCFderivsNumerical <- function(u, params.Q, params.P = NULL, t.vec, v.0, N.factors = 3, hh = 1e-4, jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF, mkt = NULL, ...){
+affineCFderivsNumerical <- function(u
+                                    , params.Q
+                                    , params.P = NULL
+                                    , t.vec
+                                    , v.0
+                                    , N.factors = 3
+                                    , hh = 1e-4
+                                    , jumpTransform = getPointerToJumpTransform('expNormJumpTransform')$TF
+                                    , mkt = NULL, ...){
   
   # define mkt
   if(is.null(mkt)){

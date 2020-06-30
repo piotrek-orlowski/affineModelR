@@ -59,6 +59,12 @@ ODEstructs <- function(params, jumpTransform = NULL, mkt, N.factors) {
     }
     # vol components
     K1[1+nn,1+nn] <- -params[[as.character(nn)]]$kpp
+    # use the tv_lr_mean flag to work with factors that have a long-run time-varying mean
+    if(!is.null(params[[as.character(nn)]]$tv_lr_mean)){
+      if(params[[as.character(nn)]]$tv_lr_mean){
+        K1[1+nn,1+nn+1] <- params[[as.character(nn)]]$kpp
+      }
+    }
   }
   
   K0 <- rep(0, N.factors + 1)
@@ -69,6 +75,12 @@ ODEstructs <- function(params, jumpTransform = NULL, mkt, N.factors) {
   
   for (nn in 1:N.factors) {
     K0[1+nn] <- params[[as.character(nn)]]$eta*params[[as.character(nn)]]$kpp
+    # use the tv_lr_mean flag to work with factors that have a long-run time-varying mean
+    if(!is.null(params[[as.character(nn)]]$tv_lr_mean)){
+      if(params[[as.character(nn)]]$tv_lr_mean){
+      K0[1+nn] <- 0.0   
+      }
+    }
   }
   
   H1 = array(0,rep(N.factors+1,3))

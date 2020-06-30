@@ -36,7 +36,8 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     }
     
   } else {
-    par_list_names <- names(params)
+    doP <- !is.null(params.P)
+    par_list_names <- names(params.Q)
     
     if(doP){
       params <- params.P
@@ -73,14 +74,14 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
                             , function(jmp_index){
                               evaluateTransform(genPtr_ = jumpTrPtr[[jmp_index]]
                                                 , beta = c(1,rep(0,N.factors))
-                                                , params.Q[[sprintf("jmp%d", jj)]])
+                                                , params.Q[[sprintf("jmp%d", jmp_index)]])
                             })
   
   ### Prepare the Q terms.dt
   
   ## arrays and vectors of parameters for the stock equation propagation
   # terms.dt : constants, i.e. risk-free rate plus jump compensatro times constant intensity
-  terms.dt <- rf.rate - crossprod(jmp_lvec, qJmpCompensator)
+  terms.dt <- rf.rate - crossprod(t(jmp_lvec), qJmpCompensator)
   
   ### Prepare the P terms.dt
   if(doP){
@@ -156,14 +157,33 @@ ODEstructsForSim <- function(params.P = NULL, params.Q, jumpTransformPointer = g
     for(nn in 1:N.factors){
       vterms.dt[nn,nn] <- params.P[[as.character(nn)]]$kpp * params.P[[as.character(nn)]]$eta
       vterms.vdt[nn,nn] <- - params.P[[as.character(nn)]]$kpp
-      # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
+      
+      # use the tv_lr_mean flag to work with factors that have a long-run time-varying mean
+      if(!is.null(params.P[[as.character(nn)]]$tv_lr_mean)){
+        if(params.P[[as.character(nn)]]$tv_lr_mean){
+          vterms.dt[nn,nn] <- 0.0
+          # this is being transposed in affineSimulate.cpp
+          vterms.vdt[nn+1,nn] <- params.P[[as.character(nn)]]$kpp 
+        }
+      }
+      # lmb below has to be squared here because is under sqrt in affineSimulate.cpp
       vterms.vdW[nn,nn] <- params.P[[as.character(nn)]]$lmb[1]^2
     }
   } else {
     for(nn in 1:N.factors){
       vterms.dt[nn,nn] <- params.Q[[as.character(nn)]]$kpp * params.Q[[as.character(nn)]]$eta
       vterms.vdt[nn,nn] <- - params.Q[[as.character(nn)]]$kpp
-      # lmb below has to be squared in the 'standard' setup because vterms.dW enters under the square root for the needs of cascade sim
+      
+      # use the tv_lr_mean flag to work with factors that have a long-run time-varying mean
+      if(!is.null(params.Q[[as.character(nn)]]$tv_lr_mean)){
+        if(params.Q[[as.character(nn)]]$tv_lr_mean){
+          vterms.dt[nn,nn] <- 0.0
+          # this is being transposed in affineSimulate.cpp
+          vterms.vdt[nn+1,nn] <- params.Q[[as.character(nn)]]$kpp 
+        }
+      }
+      
+      # lmb below has to be squared here because is under sqrt in affineSimulate.cpp
       vterms.vdW[nn,nn] <- params.Q[[as.character(nn)]]$lmb[1]^2
     }
   }
