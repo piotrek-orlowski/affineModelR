@@ -2,88 +2,130 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 affineCFevalCpp <- function(coeffs, stateMat, retLog) {
-    .Call('_affineModelR_affineCFevalCpp', PACKAGE = 'affineModelR', coeffs, stateMat, retLog)
+    .Call(`_affineModelR_affineCFevalCpp`, coeffs, stateMat, retLog)
 }
 
 affineCFderivsEvalCpp <- function(coeffs, stateMat) {
-    .Call('_affineModelR_affineCFderivsEvalCpp', PACKAGE = 'affineModelR', coeffs, stateMat)
+    .Call(`_affineModelR_affineCFderivsEvalCpp`, coeffs, stateMat)
 }
 
 affineSimulateCpp <- function(TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_) {
-    .Call('_affineModelR_affineSimulateCpp', PACKAGE = 'affineModelR', TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_)
+    .Call(`_affineModelR_affineSimulateCpp`, TT_, BB_, parList_, dt_, initVals_, genPtr_, retainIndex_)
 }
 
 #' @export
 generate_expNormJump <- function(jmpPar) {
-    .Call('_affineModelR_generate_expNormJump', PACKAGE = 'affineModelR', jmpPar)
+    .Call(`_affineModelR_generate_expNormJump`, jmpPar)
 }
 
 #' @export
 generate_kouExpJump <- function(jmpPar) {
-    .Call('_affineModelR_generate_kouExpJump', PACKAGE = 'affineModelR', jmpPar)
+    .Call(`_affineModelR_generate_kouExpJump`, jmpPar)
+}
+
+#' @export
+generate_expStockRetJump <- function(jmpPar) {
+    .Call(`_affineModelR_generate_expStockRetJump`, jmpPar)
+}
+
+#' @export
+generate_bgl2019Jump <- function(jmpPar) {
+    .Call(`_affineModelR_generate_bgl2019Jump`, jmpPar)
 }
 
 #' @export
 generate_JT2010_cojump <- function(jmpPar) {
-    .Call('_affineModelR_generate_JT2010_cojump', PACKAGE = 'affineModelR', jmpPar)
+    .Call(`_affineModelR_generate_JT2010_cojump`, jmpPar)
 }
 
 #' @export
 generate_JT2010_cojump_voljump <- function(jmpPar) {
-    .Call('_affineModelR_generate_JT2010_cojump_voljump', PACKAGE = 'affineModelR', jmpPar)
+    .Call(`_affineModelR_generate_JT2010_cojump_voljump`, jmpPar)
 }
 
 #' @export
 generate_1sidedExp <- function(jmpPar) {
-    .Call('_affineModelR_generate_1sidedExp', PACKAGE = 'affineModelR', jmpPar)
+    .Call(`_affineModelR_generate_1sidedExp`, jmpPar)
 }
 
 jumpTransform <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransform', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransform`, beta, jmpPar)
 }
 
 jumpTransformD1 <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransformD1', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransformD1`, beta, jmpPar)
 }
 
 jumpTransformD2 <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransformD2', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransformD2`, beta, jmpPar)
 }
 
 jumpTransformD3 <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransformD3', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransformD3`, beta, jmpPar)
 }
 
 kouExpTransform <- function(beta, jmpPar) {
-    .Call('_affineModelR_kouExpTransform', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_kouExpTransform`, beta, jmpPar)
 }
 
 kouExpTransformD1 <- function(beta, jmpPar) {
-    .Call('_affineModelR_kouExpTransformD1', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_kouExpTransformD1`, beta, jmpPar)
 }
 
 kouExpTransformD2 <- function(beta, jmpPar) {
-    .Call('_affineModelR_kouExpTransformD2', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_kouExpTransformD2`, beta, jmpPar)
 }
 
 kouExpTransformD3 <- function(beta, jmpPar) {
-    .Call('_affineModelR_kouExpTransformD3', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_kouExpTransformD3`, beta, jmpPar)
+}
+
+expStockRetTransform <- function(beta, jmpPar) {
+    .Call(`_affineModelR_expStockRetTransform`, beta, jmpPar)
+}
+
+expStockRetTransformD1 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_expStockRetTransformD1`, beta, jmpPar)
+}
+
+expStockRetTransformD2 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_expStockRetTransformD2`, beta, jmpPar)
+}
+
+expStockRetTransformD3 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_expStockRetTransformD3`, beta, jmpPar)
+}
+
+bgl2019Transform <- function(beta, jmpPar) {
+    .Call(`_affineModelR_bgl2019Transform`, beta, jmpPar)
+}
+
+bgl2019TransformD1 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_bgl2019TransformD1`, beta, jmpPar)
+}
+
+bgl2019TransformD2 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_bgl2019TransformD2`, beta, jmpPar)
+}
+
+bgl2019TransformD3 <- function(beta, jmpPar) {
+    .Call(`_affineModelR_bgl2019TransformD3`, beta, jmpPar)
 }
 
 jt2010_transform_CJ <- function(beta, jmpPar) {
-    .Call('_affineModelR_jt2010_transform_CJ', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jt2010_transform_CJ`, beta, jmpPar)
 }
 
 jt2010_transform_CJ_VJ <- function(beta, jmpPar) {
-    .Call('_affineModelR_jt2010_transform_CJ_VJ', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jt2010_transform_CJ_VJ`, beta, jmpPar)
 }
 
 jumpTransform_1sidedExp <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransform_1sidedExp', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransform_1sidedExp`, beta, jmpPar)
 }
 
 jumpTransform_1sidedExp_2 <- function(beta, jmpPar) {
-    .Call('_affineModelR_jumpTransform_1sidedExp_2', PACKAGE = 'affineModelR', beta, jmpPar)
+    .Call(`_affineModelR_jumpTransform_1sidedExp_2`, beta, jmpPar)
 }
 
 #' @title Make Positive Definite
@@ -93,31 +135,31 @@ jumpTransform_1sidedExp_2 <- function(beta, jmpPar) {
 #' @return matrix size of semiDefMat
 #' @export
 makePositiveDefinite <- function(semiDefMat, relEig = 1e-6) {
-    .Call('_affineModelR_makePositiveDefinite', PACKAGE = 'affineModelR', semiDefMat, relEig)
+    .Call(`_affineModelR_makePositiveDefinite`, semiDefMat, relEig)
 }
 
 #'@export
 getPointerToGenerator <- function(fstr) {
-    .Call('_affineModelR_getPointerToGenerator', PACKAGE = 'affineModelR', fstr)
+    .Call(`_affineModelR_getPointerToGenerator`, fstr)
 }
 
 #'@export
 getPointerToJumpTransform <- function(fstr) {
-    .Call('_affineModelR_getPointerToJumpTransform', PACKAGE = 'affineModelR', fstr)
+    .Call(`_affineModelR_getPointerToJumpTransform`, fstr)
 }
 
 #'@export
 evaluateGenerator <- function(genPtr_, jmpPar) {
-    .Call('_affineModelR_evaluateGenerator', PACKAGE = 'affineModelR', genPtr_, jmpPar)
+    .Call(`_affineModelR_evaluateGenerator`, genPtr_, jmpPar)
 }
 
 #'@export
 evaluateTransform <- function(genPtr_, beta, jmpPar) {
-    .Call('_affineModelR_evaluateTransform', PACKAGE = 'affineModelR', genPtr_, beta, jmpPar)
+    .Call(`_affineModelR_evaluateTransform`, genPtr_, beta, jmpPar)
 }
 
 #'@export
 evaluateTransformDerivative <- function(genPtr_, beta, jmpPar) {
-    .Call('_affineModelR_evaluateTransformDerivative', PACKAGE = 'affineModelR', genPtr_, beta, jmpPar)
+    .Call(`_affineModelR_evaluateTransformDerivative`, genPtr_, beta, jmpPar)
 }
 

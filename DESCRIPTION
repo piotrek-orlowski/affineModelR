@@ -15,7 +15,9 @@ URL: https://github.com/piotrek-orlowski/affineModelR
 Depends:
     deSolve,
     Rcpp (>= 0.12.1),
-    RcppArmadillo
+    RcppArmadillo,
+    BH
 LinkingTo: Rcpp,
-    RcppArmadillo
+    RcppArmadillo,
+    BH
 RoxygenNote: 7.1.0

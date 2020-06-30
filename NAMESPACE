@@ -1,2 +1,2 @@
 exportPattern("^[[:alpha:]]+")
-useDynLib(affineModelR)
+useDynLib(affineModelR, .registration = TRUE)
