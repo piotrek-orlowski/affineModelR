@@ -5,7 +5,7 @@ using namespace arma;
 using namespace std;
 using namespace Rcpp;
 
-void makePosDef(mat& semiDefMat, double relEig = 1e-6) {
+void makePosDef(mat& semiDefMat, double relEig) {
   try{
       // make positive definite, by first taking an eigenvalue decomposition
       vec eigVal;
